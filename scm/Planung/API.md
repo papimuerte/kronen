@@ -166,8 +166,18 @@ Diese API-Dokumentation bietet Details zu den Endpunkten, Anfragemethoden und An
 - **Request-Body:**
   ```json
   {
-    "productName": "string",
-    "quantity": "number"
+    "productId": "string",
+    "name": "string",
+    "description": "string",
+    "category": "string",
+    "material": "string",
+    "unitPrice": "number",
+    "currency": "string",
+    "availableQuantity": "number",
+    "minimumOrderQuantity": "number",
+    "supplier": "string",
+    "leadTimeDays": "number",
+    "weightGram": "number"
   }
   ```
 - **Antwort:**
@@ -213,6 +223,38 @@ Diese API-Dokumentation bietet Details zu den Endpunkten, Anfragemethoden und An
 
 ---
 
+## GraphQL-Service
+### Basis-URL: `/graphql`
+- **Beschreibung:** Erlaubt flexible Abfragen von Produkt- und Bestelldaten.
+
+### **Beispielanfragen**
+#### Produkt nach ID abrufen:
+```graphql
+query {
+  getProductById(id: "J001") {
+    productId
+    name
+    description
+    unitPrice
+    availableQuantity
+  }
+}
+```
+
+#### Alle Produkte abrufen:
+```graphql
+query {
+  getAllProducts {
+    productId
+    name
+    category
+    unitPrice
+  }
+}
+```
+
+---
+
 ## Benachrichtigungsdienst
 ### Basis-URL: `/notifications`
 
@@ -233,59 +275,6 @@ Diese API-Dokumentation bietet Details zu den Endpunkten, Anfragemethoden und An
   }
   ```
 
-### **2. Benachrichtigungen abrufen**
-- **Endpunkt:** `GET /user/{userId}`
-- **Beschreibung:** Ruft alle Benachrichtigungen für einen Benutzer ab.
-- **Antwort:**
-  ```json
-  [
-    {
-      "notificationId": "string",
-      "message": "string",
-      "sentAt": "string"
-    }
-  ]
-  ```
-
-### **3. Externe API Nutzung für Benachrichtigungen**
-- **Externe API:** Twilio (oder vergleichbar)
-- **Wichtigste Funktion:** SMS oder E-Mail-Benachrichtigungen senden.
-- **Anwendungsfall:**
-  - **Endpoint:** `/send-sms`
-  - **Beschreibung:** Sendet eine SMS an einen Benutzer.
-  - **Request-Body:**
-    ```json
-    {
-      "phoneNumber": "string",
-      "message": "string"
-    }
-    ```
-  - **Antwort:**
-    ```json
-    {
-      "status": "success",
-      "messageId": "string"
-    }
-    ```
-
-  - **Endpoint:** `/send-email`
-  - **Beschreibung:** Sendet eine E-Mail an einen Benutzer.
-  - **Request-Body:**
-    ```json
-    {
-      "email": "string",
-      "subject": "string",
-      "message": "string"
-    }
-    ```
-  - **Antwort:**
-    ```json
-    {
-      "status": "success",
-      "messageId": "string"
-    }
-    ```
-
 ---
 
 ## Zuordnung von Technologien zu Funktionen
@@ -296,7 +285,7 @@ Diese API-Dokumentation bietet Details zu den Endpunkten, Anfragemethoden und An
    - Lagerverwaltungsdienst (Abrufen und Aktualisieren von Lagerbeständen).
 
 2. **GraphQL**:
-   - Berichtswesen und Analysen (flexible Datenabfragen, Datenvisualisierung).
+   - Flexible Abfragen für Produkt- und Bestelldaten.
 
 3. **gRPC**:
    - Kommunikation zwischen Microservices, insbesondere für Tracking- und Benachrichtigungsdienste.
