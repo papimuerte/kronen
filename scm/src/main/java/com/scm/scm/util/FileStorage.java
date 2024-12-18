@@ -1,5 +1,6 @@
-package com.scm.scm.util;
+package com.example.project.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -23,5 +24,10 @@ public class FileStorage<T> {
             return new ArrayList<>();
         }
         return objectMapper.readValue(file, objectMapper.getTypeFactory().constructCollectionType(List.class, clazz));
+    }
+
+    // Write data to the file
+    public void writeData(List<T> data) throws IOException {
+        objectMapper.writeValue(file, data);
     }
 }
