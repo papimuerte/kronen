@@ -1,0 +1,12 @@
+type Query {
+    getProductById(productId: String!): Product
+}
+
+type Product {
+    productId: String
+    name: String
+    description: String
+    category: String
+    unitPrice: Float
+    availableQuantity: Int
+}
