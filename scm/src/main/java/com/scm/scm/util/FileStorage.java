@@ -1,6 +1,5 @@
-package com.example.project.util;
+package com.scm.scm.util;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
