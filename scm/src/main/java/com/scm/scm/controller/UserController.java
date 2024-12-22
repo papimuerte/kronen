@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 
 @Controller
-public class test1 {
+public class UserController {
     @RequestMapping(value = "scm", method=RequestMethod.GET)
     @ResponseBody
     public String getHelloWorld() 
@@ -16,4 +16,4 @@ public class test1 {
         return "<h1>Erste Einrichtung des Projektes</h1>";
     }
     
-};
+}
