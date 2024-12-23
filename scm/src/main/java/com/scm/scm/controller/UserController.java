@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -48,9 +49,9 @@ public class UserController {
         }
     }
 
-    // PUT /users/{email}: Aktualisieren von Benutzerdaten anhand der E-Mail
+    // PUT /users/{email}: Aktualisieren von Benutzerdaten mit Validierung
     @PutMapping("/{email}")
-    public ResponseEntity<String> updateUserByEmail(@PathVariable String email, @RequestBody User updatedUser) {
+    public ResponseEntity<String> updateUserByEmail(@PathVariable String email, @Valid @RequestBody User updatedUser) {
         try {
             List<User> users = userDataUtil.loadUsers();
             boolean userUpdated = false;
@@ -75,7 +76,25 @@ public class UserController {
         }
     }
 
-    // DELETE /users/{email}: Löschen eines Benutzers anhand der E-Mail
+    // POST /users: Neuer Benutzer mit Validierung
+    @PostMapping
+    public ResponseEntity<String> createUser(@Valid @RequestBody User newUser) {
+        try {
+            List<User> users = userDataUtil.loadUsers();
+
+            if (users.stream().anyMatch(user -> user.getEmail().equalsIgnoreCase(newUser.getEmail()))) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Benutzer mit dieser E-Mail existiert bereits.");
+            }
+
+            users.add(newUser);
+            userDataUtil.saveUsers(users);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Benutzer erfolgreich erstellt.");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fehler beim Erstellen des Benutzers.");
+        }
+    }
+
+    // DELETE /users/{email}: Löschen eines Benutzers
     @DeleteMapping("/{email}")
     public ResponseEntity<String> deleteUserByEmail(@PathVariable String email) {
         try {
