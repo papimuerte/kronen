@@ -79,4 +79,26 @@ public class ProductController {
         }
     }
 
+    private boolean updateNonNullFields(Object source, Object target) {
+        boolean isUpdated = false;
+
+        for (var field : source.getClass().getDeclaredFields()) {
+            field.setAccessible(true); // Allow access to private fields
+            try {
+                Object sourceValue = field.get(source);
+                if (sourceValue != null) { // Update only non-null fields
+                    Object targetValue = field.get(target);
+                    if (!sourceValue.equals(targetValue)) { // Update if value has changed
+                        field.set(target, sourceValue);
+                        isUpdated = true;
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("Fehler beim Aktualisieren der Felder.", e);
+            }
+        }
+
+        return isUpdated;
+    }
+
 }
