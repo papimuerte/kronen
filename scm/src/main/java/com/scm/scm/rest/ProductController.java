@@ -18,14 +18,28 @@ public class ProductController {
     public ProductController(ProductDataUtil productDataUtil) {
         this.productDataUtil = productDataUtil;
     }
-    
-    
-        // Alle Produkte abrufen (READ)
+
+    // Alle Produkte abrufen (READ)
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         try {
             List<Product> products = productDataUtil.loadProducts();
             return ResponseEntity.ok(products);
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // Ein Produkt nach ID abrufen (READ)
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable String id) {
+        try {
+            List<Product> products = productDataUtil.loadProducts();
+            return products.stream()
+                    .filter(product -> product.getProductId().equals(id))
+                    .findFirst()
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
