@@ -45,4 +45,17 @@ public class ProductController {
         }
     }
 
+    // Neues Produkt hinzufügen (CREATE)
+    @PostMapping
+    public ResponseEntity<String> addProduct(@RequestBody Product newProduct) {
+        try {
+            List<Product> products = productDataUtil.loadProducts();
+            products.add(newProduct);
+            productDataUtil.saveProducts(products);
+            return ResponseEntity.ok("Produkt hinzugefügt.");
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Fehler beim Speichern des Produkts.");
+        }
+    }
+
 }
