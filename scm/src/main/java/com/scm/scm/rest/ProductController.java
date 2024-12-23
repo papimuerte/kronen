@@ -1,15 +1,15 @@
 package com.scm.scm.rest;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.scm.scm.util.ProductDataUtil;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/api/products")
 public class ProductController {
-    @GetMapping
-    public String getProduct() {
-        return "Product API is running!";
+
+    private final ProductDataUtil productDataUtil;
+
+    public ProductController(ProductDataUtil productDataUtil) {
+        this.productDataUtil = productDataUtil;
     }
 }
-
