@@ -2,6 +2,7 @@ package com.scm.scm.controller;
 
 import com.scm.scm.model.User;
 import com.scm.scm.util.UserDataUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +24,12 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         try {
             List<User> users = userDataUtil.loadUsers();
+            if (users.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
             return ResponseEntity.ok(users);
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
@@ -38,9 +42,9 @@ public class UserController {
                     .filter(user -> user.getEmail().equalsIgnoreCase(email))
                     .findFirst()
                     .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -49,16 +53,25 @@ public class UserController {
     public ResponseEntity<String> updateUserByEmail(@PathVariable String email, @RequestBody User updatedUser) {
         try {
             List<User> users = userDataUtil.loadUsers();
+            boolean userUpdated = false;
+
             for (User user : users) {
                 if (user.getEmail().equalsIgnoreCase(email)) {
                     updateNonNullFields(updatedUser, user);
-                    userDataUtil.saveUsers(users);
-                    return ResponseEntity.ok("Benutzer erfolgreich aktualisiert.");
+                    userUpdated = true;
+                    break;
                 }
             }
-            return ResponseEntity.notFound().build();
+
+            if (userUpdated) {
+                userDataUtil.saveUsers(users);
+                return ResponseEntity.ok("Benutzer erfolgreich aktualisiert.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Benutzer nicht gefunden.");
+            }
+
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Fehler beim Aktualisieren des Benutzers.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fehler beim Aktualisieren des Benutzers.");
         }
     }
 
@@ -68,13 +81,15 @@ public class UserController {
         try {
             List<User> users = userDataUtil.loadUsers();
             boolean removed = users.removeIf(user -> user.getEmail().equalsIgnoreCase(email));
+
             if (removed) {
                 userDataUtil.saveUsers(users);
                 return ResponseEntity.ok("Benutzer erfolgreich gelöscht.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Benutzer nicht gefunden.");
             }
-            return ResponseEntity.notFound().build();
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Fehler beim Löschen des Benutzers.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fehler beim Löschen des Benutzers.");
         }
     }
 
