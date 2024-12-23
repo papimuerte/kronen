@@ -43,4 +43,46 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    // PUT /users/{email}: Aktualisieren von Benutzerdaten anhand der E-Mail
+    @PutMapping("/{email}")
+    public ResponseEntity<String> updateUserByEmail(@PathVariable String email, @RequestBody User updatedUser) {
+        try {
+            List<User> users = userDataUtil.loadUsers();
+            for (User user : users) {
+                if (user.getEmail().equalsIgnoreCase(email)) {
+                    updateNonNullFields(updatedUser, user);
+                    userDataUtil.saveUsers(users);
+                    return ResponseEntity.ok("Benutzer erfolgreich aktualisiert.");
+                }
+            }
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Fehler beim Aktualisieren des Benutzers.");
+        }
+    }
+
+    // DELETE /users/{email}: Löschen eines Benutzers anhand der E-Mail
+    @DeleteMapping("/{email}")
+    public ResponseEntity<String> deleteUserByEmail(@PathVariable String email) {
+        try {
+            List<User> users = userDataUtil.loadUsers();
+            boolean removed = users.removeIf(user -> user.getEmail().equalsIgnoreCase(email));
+            if (removed) {
+                userDataUtil.saveUsers(users);
+                return ResponseEntity.ok("Benutzer erfolgreich gelöscht.");
+            }
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Fehler beim Löschen des Benutzers.");
+        }
+    }
+
+    // Hilfsmethode zum Aktualisieren von Feldern
+    private void updateNonNullFields(User source, User target) {
+        if (source.getPassword() != null) target.setPassword(source.getPassword());
+        if (source.getRole() != null) target.setRole(source.getRole());
+        if (source.getPhone() != null) target.setPhone(source.getPhone());
+        if (source.getAddress() != null) target.setAddress(source.getAddress());
+    }
 }
