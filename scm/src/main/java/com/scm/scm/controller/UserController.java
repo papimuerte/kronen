@@ -2,6 +2,9 @@ package com.scm.scm.controller;
 
 import com.scm.scm.model.User;
 import com.scm.scm.util.UserDataUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +23,12 @@ public class UserController {
         this.userDataUtil = userDataUtil;
     }
 
-    // GET /users: Abrufen aller Benutzer
+    @Operation(summary = "Gibt alle Benutzer zurück", description = "Abrufen aller Benutzer aus dem System")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Benutzer erfolgreich abgerufen"),
+        @ApiResponse(responseCode = "204", description = "Keine Benutzer gefunden"),
+        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
+    })
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         try {
@@ -34,7 +42,12 @@ public class UserController {
         }
     }
 
-    // GET /users/{email}: Anzeigen eines spezifischen Benutzers anhand der E-Mail
+    @Operation(summary = "Gibt einen Benutzer anhand der E-Mail zurück", description = "Abrufen eines spezifischen Benutzers mit seiner E-Mail-Adresse")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Benutzer gefunden"),
+        @ApiResponse(responseCode = "404", description = "Benutzer nicht gefunden"),
+        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
+    })
     @GetMapping("/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         try {
@@ -49,7 +62,12 @@ public class UserController {
         }
     }
 
-    // PUT /users/{email}: Aktualisieren von Benutzerdaten mit Validierung
+    @Operation(summary = "Aktualisiert Benutzerdaten", description = "Aktualisieren der Daten eines Benutzers anhand seiner E-Mail")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Benutzer erfolgreich aktualisiert"),
+        @ApiResponse(responseCode = "404", description = "Benutzer nicht gefunden"),
+        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
+    })
     @PutMapping("/{email}")
     public ResponseEntity<String> updateUserByEmail(@PathVariable String email, @Valid @RequestBody User updatedUser) {
         try {
@@ -76,7 +94,12 @@ public class UserController {
         }
     }
 
-    // POST /users: Neuer Benutzer mit Validierung
+    @Operation(summary = "Erstellt einen neuen Benutzer", description = "Hinzufügen eines neuen Benutzers in das System")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Benutzer erfolgreich erstellt"),
+        @ApiResponse(responseCode = "409", description = "Benutzer mit dieser E-Mail existiert bereits"),
+        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
+    })
     @PostMapping
     public ResponseEntity<String> createUser(@Valid @RequestBody User newUser) {
         try {
@@ -94,7 +117,12 @@ public class UserController {
         }
     }
 
-    // DELETE /users/{email}: Löschen eines Benutzers
+    @Operation(summary = "Löscht einen Benutzer", description = "Entfernt einen Benutzer aus dem System anhand seiner E-Mail")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Benutzer erfolgreich gelöscht"),
+        @ApiResponse(responseCode = "404", description = "Benutzer nicht gefunden"),
+        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
+    })
     @DeleteMapping("/{email}")
     public ResponseEntity<String> deleteUserByEmail(@PathVariable String email) {
         try {
@@ -112,7 +140,6 @@ public class UserController {
         }
     }
 
-    // Hilfsmethode zum Aktualisieren von Feldern
     private void updateNonNullFields(User source, User target) {
         if (source.getPassword() != null) target.setPassword(source.getPassword());
         if (source.getRole() != null) target.setRole(source.getRole());
