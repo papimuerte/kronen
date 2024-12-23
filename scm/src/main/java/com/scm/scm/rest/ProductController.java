@@ -58,4 +58,25 @@ public class ProductController {
         }
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateProduct(@PathVariable String id, @RequestBody Product updatedProduct) {
+        try {
+            List<Product> products = productDataUtil.loadProducts();
+            for (Product product : products) {
+                if (product.getProductId().equals(id)) {
+                    boolean isUpdated = updateNonNullFields(updatedProduct, product);
+                    if (isUpdated) {
+                        productDataUtil.saveProducts(products);
+                        return ResponseEntity.ok("Produkt aktualisiert.");
+                    } else {
+                        return ResponseEntity.ok("Keine Änderungen vorgenommen.");
+                    }
+                }
+            }
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Fehler beim Aktualisieren des Produkts.");
+        }
+    }
+
 }
