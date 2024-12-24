@@ -101,4 +101,19 @@ public class ProductController {
         return isUpdated;
     }
 
+    // Produkt löschen (DELETE)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable String id) {
+        try {
+            List<Product> products = productDataUtil.loadProducts();
+            boolean removed = products.removeIf(product -> product.getProductId().equals(id));
+            if (removed) {
+                productDataUtil.saveProducts(products);
+                return ResponseEntity.ok("Produkt gelöscht.");
+            }
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Fehler beim Löschen des Produkts.");
+        }
+    }
 }
