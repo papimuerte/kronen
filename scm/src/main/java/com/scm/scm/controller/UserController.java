@@ -3,18 +3,16 @@ package com.scm.scm.controller;
 import com.scm.scm.model.User;
 import com.scm.scm.util.UserDataUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "User Management", description = "Endpoints for managing users")
 public class UserController {
 
     private final UserDataUtil userDataUtil;
@@ -23,126 +21,82 @@ public class UserController {
         this.userDataUtil = userDataUtil;
     }
 
-    @Operation(summary = "Gibt alle Benutzer zurück", description = "Abrufen aller Benutzer aus dem System")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Benutzer erfolgreich abgerufen"),
-        @ApiResponse(responseCode = "204", description = "Keine Benutzer gefunden"),
-        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
-    })
+    @Operation(
+        summary = "Get all users",
+        description = "Retrieves a list of all registered users."
+    )
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         try {
             List<User> users = userDataUtil.loadUsers();
-            if (users.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            }
             return ResponseEntity.ok(users);
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.internalServerError().build();
         }
     }
 
-    @Operation(summary = "Gibt einen Benutzer anhand der E-Mail zurück", description = "Abrufen eines spezifischen Benutzers mit seiner E-Mail-Adresse")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Benutzer gefunden"),
-        @ApiResponse(responseCode = "404", description = "Benutzer nicht gefunden"),
-        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
-    })
-    @GetMapping("/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+    @Operation(
+        summary = "Get user by ID",
+        description = "Fetches details of a specific user using their username."
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable String id) {
         try {
             List<User> users = userDataUtil.loadUsers();
             return users.stream()
-                    .filter(user -> user.getEmail().equalsIgnoreCase(email))
+                    .filter(user -> user.getUsername().equals(id))
                     .findFirst()
                     .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                    .orElse(ResponseEntity.notFound().build());
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
-    @Operation(summary = "Aktualisiert Benutzerdaten", description = "Aktualisieren der Daten eines Benutzers anhand seiner E-Mail")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Benutzer erfolgreich aktualisiert"),
-        @ApiResponse(responseCode = "404", description = "Benutzer nicht gefunden"),
-        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
-    })
-    @PutMapping("/{email}")
-    public ResponseEntity<String> updateUserByEmail(@PathVariable String email, @Valid @RequestBody User updatedUser) {
+    @Operation(
+        summary = "Update user by ID",
+        description = "Updates the details of a specific user using their username. Only non-null fields will be updated."
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateUser(@PathVariable String id, @RequestBody User updatedUser) {
         try {
             List<User> users = userDataUtil.loadUsers();
-            boolean userUpdated = false;
-
             for (User user : users) {
-                if (user.getEmail().equalsIgnoreCase(email)) {
+                if (user.getUsername().equals(id)) {
                     updateNonNullFields(updatedUser, user);
-                    userUpdated = true;
-                    break;
+                    userDataUtil.saveUsers(users);
+                    return ResponseEntity.ok("Benutzer erfolgreich aktualisiert.");
                 }
             }
-
-            if (userUpdated) {
-                userDataUtil.saveUsers(users);
-                return ResponseEntity.ok("Benutzer erfolgreich aktualisiert.");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Benutzer nicht gefunden.");
-            }
-
+            return ResponseEntity.notFound().build();
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fehler beim Aktualisieren des Benutzers.");
+            return ResponseEntity.internalServerError().body("Fehler beim Aktualisieren des Benutzers.");
         }
     }
 
-    @Operation(summary = "Erstellt einen neuen Benutzer", description = "Hinzufügen eines neuen Benutzers in das System")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Benutzer erfolgreich erstellt"),
-        @ApiResponse(responseCode = "409", description = "Benutzer mit dieser E-Mail existiert bereits"),
-        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
-    })
-    @PostMapping
-    public ResponseEntity<String> createUser(@Valid @RequestBody User newUser) {
+    @Operation(
+        summary = "Delete user by ID",
+        description = "Deletes a specific user using their username."
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable String id) {
         try {
             List<User> users = userDataUtil.loadUsers();
-
-            if (users.stream().anyMatch(user -> user.getEmail().equalsIgnoreCase(newUser.getEmail()))) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Benutzer mit dieser E-Mail existiert bereits.");
-            }
-
-            users.add(newUser);
-            userDataUtil.saveUsers(users);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Benutzer erfolgreich erstellt.");
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fehler beim Erstellen des Benutzers.");
-        }
-    }
-
-    @Operation(summary = "Löscht einen Benutzer", description = "Entfernt einen Benutzer aus dem System anhand seiner E-Mail")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Benutzer erfolgreich gelöscht"),
-        @ApiResponse(responseCode = "404", description = "Benutzer nicht gefunden"),
-        @ApiResponse(responseCode = "500", description = "Interner Serverfehler")
-    })
-    @DeleteMapping("/{email}")
-    public ResponseEntity<String> deleteUserByEmail(@PathVariable String email) {
-        try {
-            List<User> users = userDataUtil.loadUsers();
-            boolean removed = users.removeIf(user -> user.getEmail().equalsIgnoreCase(email));
-
+            boolean removed = users.removeIf(user -> user.getUsername().equals(id));
             if (removed) {
                 userDataUtil.saveUsers(users);
                 return ResponseEntity.ok("Benutzer erfolgreich gelöscht.");
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Benutzer nicht gefunden.");
             }
+            return ResponseEntity.notFound().build();
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fehler beim Löschen des Benutzers.");
+            return ResponseEntity.internalServerError().body("Fehler beim Löschen des Benutzers.");
         }
     }
 
     private void updateNonNullFields(User source, User target) {
         if (source.getPassword() != null) target.setPassword(source.getPassword());
         if (source.getRole() != null) target.setRole(source.getRole());
+        if (source.getEmail() != null) target.setEmail(source.getEmail());
         if (source.getPhone() != null) target.setPhone(source.getPhone());
         if (source.getAddress() != null) target.setAddress(source.getAddress());
     }
