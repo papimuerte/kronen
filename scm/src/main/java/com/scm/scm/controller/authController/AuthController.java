@@ -1,5 +1,7 @@
 package com.scm.scm.controller.authController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,7 @@ import javax.crypto.SecretKey;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Endpoints for user authentication and token management")
 public class AuthController {
 
     private final UserDataUtil userDataUtil;
@@ -28,6 +31,7 @@ public class AuthController {
         this.userDataUtil = userDataUtil;
     }
 
+    @Operation(summary = "Register a new user", description = "Allows a new user to register with a unique username and email.")
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody User user) {
         try {
@@ -43,6 +47,7 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Login a user", description = "Authenticates a user and generates a JWT token upon successful login.")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User loginRequest) {
         try {
@@ -56,7 +61,6 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Ungültige Anmeldedaten.");
             }
 
-            @SuppressWarnings("deprecation")
             String jwt = Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("role", user.getRole())
@@ -74,22 +78,21 @@ public class AuthController {
         }
     }
 
+    @Operation(summary = "Validate a JWT token", description = "Verifies the validity of a JWT token and returns its claims.")
     @GetMapping("/validate")
     public ResponseEntity<Object> validateToken(@RequestParam String token) {
         try {
             final SecretKey key = Keys.hmacShaKeyFor("MeinGeheimerSchlüsselMitMindestens32Zeichen".getBytes());
 
-            Claims claims = Jwts.parser()
-            .verifyWith(key)
-            .build()
-            .parseSignedClaims(token)
-            .getPayload();
-    
+            Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
             return ResponseEntity.ok(claims);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token ungültig.");
         }
     }
-    
-
 }
