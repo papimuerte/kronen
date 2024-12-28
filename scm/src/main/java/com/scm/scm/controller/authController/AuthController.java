@@ -61,6 +61,7 @@ public class AuthController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Ungültige Anmeldedaten.");
             }
 
+            @SuppressWarnings("deprecation")
             String jwt = Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("role", user.getRole())
@@ -84,11 +85,11 @@ public class AuthController {
         try {
             final SecretKey key = Keys.hmacShaKeyFor("MeinGeheimerSchlüsselMitMindestens32Zeichen".getBytes());
 
-            Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+            Claims claims = Jwts.parser()
+                .verifyWith(key)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
 
             return ResponseEntity.ok(claims);
         } catch (Exception e) {
