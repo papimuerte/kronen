@@ -24,11 +24,11 @@ public class GraphQLConfig {
                             return orderResolver.getOrder(id);
                         }))
                 .type("Mutation", typeWiring -> typeWiring
-                    .dataFetcher("createOrder", env -> {
-                        // Convert the raw input to OrderInput
-                        ObjectMapper mapper = new ObjectMapper();
-                        OrderInput input = mapper.convertValue(env.getArgument("input"), OrderInput.class);
-                        return orderResolver.createOrder(input);
-                    }));
-    }
+                        .dataFetcher("createOrder", env -> {
+                            // Convert the raw input to OrderInput
+                            ObjectMapper mapper = new ObjectMapper();
+                            OrderInput input = mapper.convertValue(env.getArgument("input"), OrderInput.class);
+                            return orderResolver.createOrder(input);
+                        }));
+    }
 }

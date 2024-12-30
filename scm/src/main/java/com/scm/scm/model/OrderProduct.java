@@ -1,16 +1,21 @@
 package com.scm.scm.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class OrderProduct {
     private String productId;
     private String name;
     private int quantity;
-    private Double unitPrice;
+    private Double unitPrice;
 
+    // Constructor for order-specific products
+    public OrderProduct(String productId, String name, int quantity, Double unitPrice) {
+        this.productId = productId;
+        this.name = name;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+    }
 }
