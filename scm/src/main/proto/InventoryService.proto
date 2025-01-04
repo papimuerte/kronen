@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package com.scm.scm.grpc;
+
+service InventoryService {
+    rpc CheckAvailability(ProductRequest) returns (ProductResponse);
+    rpc UpdateInventory(UpdateInventoryRequest) returns (InventoryUpdateResponse);
+}
+
+message ProductRequest {
+    string productId = 1;
+    int32 quantity = 2;
+}
+
+message ProductResponse {
+    string productId = 1;
+    bool available = 2;
+    int32 availableQuantity = 3;
+}
+
+message UpdateInventoryRequest {
+    string productId = 1;
+    int32 quantity = 2;
+}
+
+message InventoryUpdateResponse {
+    string productId = 1;
+    bool success = 2;
+    string message = 3;
+}
