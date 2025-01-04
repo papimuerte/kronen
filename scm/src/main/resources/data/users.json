@@ -1,0 +1,19 @@
+[
+    {
+      "username": "user1",
+      "password": "password1",
+      "role": "USER",
+      "email": "user1@example.com",
+      "phone": "123456789",
+      "address": "123 Main St"
+    },
+    {
+      "username": "user2",
+      "password": "password2",
+      "role": "ADMIN",
+      "email": "user2@example.com",
+      "phone": "987654321",
+      "address": "456 Main St"
+    }
+  ]
+  
