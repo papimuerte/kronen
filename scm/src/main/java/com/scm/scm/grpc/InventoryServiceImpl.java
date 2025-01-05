@@ -55,4 +55,63 @@ public class InventoryServiceImpl extends InventoryServiceGrpc.InventoryServiceI
                     .asRuntimeException());
         }
     }
-}
+
+    @Override
+    public void updateInventory(UpdateInventoryRequest request, StreamObserver<InventoryUpdateResponse> responseObserver) {
+        try {
+            List<Product> allProducts = inventoryDataUtil.loadProducts(); // Load all products
+            Optional<Product> productOptional = allProducts.stream()
+                    .filter(product -> product.getProductId().equals(request.getProductId()))
+                    .findFirst();
+    
+            if (productOptional.isPresent()) {
+                Product product = productOptional.get();
+    
+                if (product.getAvailableQuantity() >= request.getQuantity()) {
+                    // Update the product's available quantity
+                    product.setAvailableQuantity(product.getAvailableQuantity() - request.getQuantity());
+    
+                    // Save updated product list back to the JSON file
+                    inventoryDataUtil.saveProducts(allProducts);
+    
+                    InventoryUpdateResponse response = InventoryUpdateResponse.newBuilder()
+                            .setProductId(product.getProductId())
+                            .setSuccess(true)
+                            .setMessage("Inventory updated successfully")
+                            .build();
+    
+                    responseObserver.onNext(response);
+                    responseObserver.onCompleted();
+                } else {
+                    InventoryUpdateResponse response = InventoryUpdateResponse.newBuilder()
+                            .setProductId(product.getProductId())
+                            .setSuccess(false)
+                            .setMessage("Insufficient inventory")
+                            .build();
+    
+                    responseObserver.onNext(response);
+                    responseObserver.onCompleted();
+                }
+            } else {
+                responseObserver.onError(Status.NOT_FOUND
+                        .withDescription("Product not found: " + request.getProductId())
+                        .asRuntimeException());
+            }
+        } catch (IOException e) {
+            System.err.println("Error during updateInventory: " + e.getMessage());
+            e.printStackTrace();
+            responseObserver.onError(Status.UNKNOWN
+                    .withDescription("Error accessing inventory data")
+                    .withCause(e)
+                    .asRuntimeException());
+        } catch (Exception e) {
+            System.err.println("Error during updateInventory: " + e.getMessage());
+            e.printStackTrace();
+            responseObserver.onError(Status.UNKNOWN
+                    .withDescription("Unknown error occurred")
+                    .withCause(e)
+                    .asRuntimeException());
+        }
+    }
+
+}   
