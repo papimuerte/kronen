@@ -1,12 +1,16 @@
 package com.scm.scm.graphql;
 
+import com.scm.scm.grpc.InventoryServiceGrpc;
+import com.scm.scm.grpc.InventoryServiceOuterClass;
+import com.scm.scm.grpc.InventoryServiceOuterClass.ProductRequest;
+import com.scm.scm.grpc.InventoryServiceOuterClass.ProductResponse;
 import com.scm.scm.model.Order;
 import com.scm.scm.model.OrderProduct;
-import com.scm.scm.model.Product;
-import com.scm.scm.util.InventoryDataUtil;
 import com.scm.scm.util.OrderDataUtil;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -19,14 +23,15 @@ import java.util.stream.Collectors;
 public class OrderResolver {
 
     private final OrderDataUtil orderDataUtil;
+    private final InventoryServiceGrpc.InventoryServiceBlockingStub inventoryStub;
 
-    @Autowired
-    private InventoryDataUtil inventoryDataUtil;
-
-    @Autowired
-    public OrderResolver(OrderDataUtil orderDataUtil, InventoryDataUtil inventoryDataUtil) {
+    public OrderResolver(OrderDataUtil orderDataUtil) {
         this.orderDataUtil = orderDataUtil;
-        this.inventoryDataUtil = inventoryDataUtil;
+
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+                .usePlaintext()
+                .build();
+        this.inventoryStub = InventoryServiceGrpc.newBlockingStub(channel);
     }
 
     public List<Order> getOrders(String customerUsername) throws IOException {
@@ -45,28 +50,40 @@ public class OrderResolver {
     }
 
     public Order createOrder(OrderInput input) throws IOException {
-        List<OrderProduct> products = input.getProducts().stream()
-                .map(productInput -> {
-                    try {
-                        Product inventoryProduct = inventoryDataUtil.getProductById(productInput.getProductId())
-                                .orElseThrow(() -> new RuntimeException("Product not found: " + productInput.getProductId()));
+    // Validate inventory and update stock using gRPC
+    List<OrderProduct> products = input.getProducts().stream()
+        .map(productInput -> {
+            // Check availability
+            ProductResponse response = inventoryStub.checkAvailability(
+                    ProductRequest.newBuilder()
+                            .setProductId(productInput.getProductId())
+                            .setQuantity(productInput.getQuantity())
+                            .build()
+            );
 
-                        if (inventoryProduct.getAvailableQuantity() < productInput.getQuantity()) {
-                            throw new RuntimeException("Insufficient inventory for product: " + productInput.getProductId());
-                        }
+            if (!response.getAvailable()) {
+                throw new RuntimeException("Product " + productInput.getProductId() +
+                        " is unavailable. Available quantity: " + response.getAvailableQuantity());
+            }
 
-                        return new OrderProduct(
-                                inventoryProduct.getProductId(),
-                                inventoryProduct.getName(),
-                                productInput.getQuantity(),
-                                inventoryProduct.getUnitPrice()
-                        );
-                    } catch (IOException e) {
-                        throw new RuntimeException("Error loading product inventory: " + e.getMessage(), e);
-                    }
-                })
-                .collect(Collectors.toList());
+            // Update inventory
+            inventoryStub.updateInventory(
+                    InventoryServiceOuterClass.UpdateInventoryRequest.newBuilder()
+                            .setProductId(productInput.getProductId())
+                            .setQuantity(productInput.getQuantity())
+                            .build()
+            );
 
+            return new OrderProduct(
+                    response.getProductId(),
+                    productInput.getName(),
+                    productInput.getQuantity(),
+                    productInput.getUnitPrice()
+            );
+        })
+        .collect(Collectors.toList());
+
+        // Create a new order
         Order newOrder = new Order(
                 UUID.randomUUID().toString(),
                 input.getCustomerUsername(),
@@ -75,21 +92,15 @@ public class OrderResolver {
                 "Pending",
                 LocalDateTime.now().toString()
         );
-
+    
+        // Save the new order
         List<Order> orders = orderDataUtil.loadOrders();
         orders.add(newOrder);
         orderDataUtil.saveOrders(orders);
-
-        // Update inventory quantities
-        for (OrderProduct orderProduct : products) {
-            Product inventoryProduct = inventoryDataUtil.getProductById(orderProduct.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found during inventory update: " + orderProduct.getProductId()));
-            inventoryProduct.setAvailableQuantity(inventoryProduct.getAvailableQuantity() - orderProduct.getQuantity());
-        }
-        inventoryDataUtil.saveProducts(inventoryDataUtil.loadProducts());
-
+    
         return newOrder;
     }
+
 
     private float calculateTotalAmount(List<OrderProduct> products) {
         return (float) products.stream()
