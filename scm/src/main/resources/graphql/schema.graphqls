@@ -30,5 +30,5 @@ input OrderInput {
 
 input OrderProductInput {
   productId: String!
-  quantity: Int!
+  quantity: Int!
 }
