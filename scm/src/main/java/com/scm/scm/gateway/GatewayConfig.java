@@ -22,6 +22,14 @@ public class GatewayConfig {
                 // Route to gRPC services
                 .route("grpc-api", r -> r.path("/grpc/**")
                         .uri("http://localhost:8083")) // gRPC service URL
+
+                 // Route to Login
+                 .route("auth-login", r -> r.path("/auth/login")
+                 .uri("http://localhost:8084")) // Login service URL
+
+                // Route to Registration
+                 .route("auth-register", r -> r.path("/auth/register")
+                 .uri("http://localhost:8085")) // Registration service URL
                 .build();
     }
 }
