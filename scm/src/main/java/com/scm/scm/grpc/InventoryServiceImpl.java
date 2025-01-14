@@ -8,7 +8,6 @@ import com.scm.scm.grpc.InventoryServiceOuterClass.UpdateInventoryRequest;
 import com.scm.scm.model.Product;
 import com.scm.scm.util.InventoryDataUtil;
 
-import InventoryServiceGrpc.InventoryServiceBlockingStub;
 import io.grpc.ManagedChannel;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -122,8 +121,4 @@ public class InventoryServiceImpl extends InventoryServiceGrpc.InventoryServiceI
         }
     }
 
-    public static InventoryServiceBlockingStub newBlockingStub(ManagedChannel channel) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'newBlockingStub'");
-    }
 }
