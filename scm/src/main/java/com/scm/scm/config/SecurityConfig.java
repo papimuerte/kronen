@@ -14,14 +14,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        http.csrf(csrf -> csrf.disable()); // Disable CSRF
+        // Disable CSRF protection
+        http.csrf(csrf -> csrf.disable());
 
+        // Configure public routes
         http.authorizeExchange(exchange -> exchange
-                .pathMatchers("/api/products/", "/auth/","/graphql/", "/grpc/").permitAll() // Public routes
+                .pathMatchers("/api/", "/auth/", "/graphql/", "/grpc/").permitAll()
+                .anyExchange().authenticated() // All other routes require authentication
         );
 
-        http.httpBasic(withDefaults()); // Enable HTTP Basic Authentication
+        // Enable HTTP Basic Authentication
+        http.httpBasic(withDefaults());
 
+        // Build and return the security filter chain
         return http.build();
-    }
+    }
 }

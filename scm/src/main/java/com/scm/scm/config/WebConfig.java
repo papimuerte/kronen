@@ -19,6 +19,6 @@ public class WebConfig {
                         .allowedHeaders("*") // Allow all headers
                         .allowCredentials(true); // Allow cookies or credentials
             }
-        };
-    }
+        };
+    }
 }
