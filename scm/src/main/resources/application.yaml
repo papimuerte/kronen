@@ -1,0 +1,68 @@
+server:
+  port: 8080
+  http2:
+    enabled: true
+
+grpc:
+  server:
+    port: 9090
+  client:
+    inventory-service:
+      address: "localhost:9090"
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+
+
+
+spring:
+  application:
+    name: scm
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  cloud:
+    gateway:
+      routes:
+        - id: rest-api
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/products/**
+
+        - id: auth-api
+          uri: http://localhost:8083
+          predicates:
+            - Path=/auth/**
+
+        - id: graphql-api
+          uri: http://localhost:8082
+          predicates:
+            - Path=/graphql/**
+
+        - id: grpcInventory
+          uri: http://localhost:8084
+          predicates:
+            - Path=/grpc/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: '/grpc/(?<segment>.*)'
+                replacement: '/${segment}'
+            - name: AddRequestHeader
+              args:
+                name: Content-Type
+                value: application/grpc+proto
+            - name: AddRequestHeader
+              args:
+                name: TE
+                value: trailers
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway, health, metrics
+
+logging:
+  level:
+    org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG
+    org.springframework.cloud.gateway: DEBUG

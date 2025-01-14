@@ -1,3 +1,4 @@
+
 package com.scm.scm.config;
 
 import org.springframework.context.annotation.Bean;
@@ -17,8 +18,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable()); // Disable CSRF
 
         http.authorizeExchange(exchange -> exchange
-                .pathMatchers("/api/products/**", "/register", "/login").permitAll() // Public routes
-                .pathMatchers("/graphql/**", "/grpc/**").authenticated() // Protected routes
+                .pathMatchers("/api/products/**", "/auth/register", "/auth/login","/graphql/**", "/grpc/**").permitAll() // Public routes
         );
 
         http.httpBasic(withDefaults()); // Enable HTTP Basic Authentication

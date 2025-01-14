@@ -1,5 +1,6 @@
 package com.scm.scm.grpc;
 
+import com.scm.scm.grpc.InventoryServiceGrpc.InventoryServiceImplBase;
 import com.scm.scm.grpc.InventoryServiceOuterClass.InventoryUpdateResponse;
 import com.scm.scm.grpc.InventoryServiceOuterClass.ProductRequest;
 import com.scm.scm.grpc.InventoryServiceOuterClass.ProductResponse;
@@ -7,6 +8,8 @@ import com.scm.scm.grpc.InventoryServiceOuterClass.UpdateInventoryRequest;
 import com.scm.scm.model.Product;
 import com.scm.scm.util.InventoryDataUtil;
 
+import InventoryServiceGrpc.InventoryServiceBlockingStub;
+import io.grpc.ManagedChannel;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -28,17 +31,17 @@ public class InventoryServiceImpl extends InventoryServiceGrpc.InventoryServiceI
     public void checkAvailability(ProductRequest request, StreamObserver<ProductResponse> responseObserver) {
         try {
             Optional<Product> productOptional = inventoryDataUtil.getProductById(request.getProductId());
-
             if (productOptional.isPresent()) {
                 Product product = productOptional.get();
                 boolean isAvailable = product.getAvailableQuantity() >= request.getQuantity();
-                
+    
                 ProductResponse response = ProductResponse.newBuilder()
                         .setProductId(product.getProductId())
                         .setAvailable(isAvailable)
                         .setAvailableQuantity(product.getAvailableQuantity())
                         .build();
-
+    
+                System.out.println("Sending Response: " + response);
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
             } else {
@@ -47,39 +50,44 @@ public class InventoryServiceImpl extends InventoryServiceGrpc.InventoryServiceI
                         .asRuntimeException());
             }
         } catch (Exception e) {
-            System.err.println("Error during checkAvailability: " + e.getMessage());
-            e.printStackTrace();
             responseObserver.onError(Status.UNKNOWN
-                    .withDescription("Unknown error occurred")
+                    .withDescription("Error occurred")
                     .withCause(e)
                     .asRuntimeException());
         }
     }
+    
+    
 
     @Override
     public void updateInventory(UpdateInventoryRequest request, StreamObserver<InventoryUpdateResponse> responseObserver) {
         try {
-            List<Product> allProducts = inventoryDataUtil.loadProducts(); // Load all products
+            // Load all products
+            List<Product> allProducts = inventoryDataUtil.loadProducts();
             Optional<Product> productOptional = allProducts.stream()
                     .filter(product -> product.getProductId().equals(request.getProductId()))
                     .findFirst();
-    
+
             if (productOptional.isPresent()) {
                 Product product = productOptional.get();
-    
+
                 if (product.getAvailableQuantity() >= request.getQuantity()) {
-                    // Update the product's available quantity
+                    // Update product quantity
                     product.setAvailableQuantity(product.getAvailableQuantity() - request.getQuantity());
-    
-                    // Save updated product list back to the JSON file
+
+                    // Save updated products back to the JSON file
                     inventoryDataUtil.saveProducts(allProducts);
-    
+
                     InventoryUpdateResponse response = InventoryUpdateResponse.newBuilder()
                             .setProductId(product.getProductId())
                             .setSuccess(true)
                             .setMessage("Inventory updated successfully")
                             .build();
-    
+
+                    System.out.println("Returning gRPC response: " + response);
+
+
+
                     responseObserver.onNext(response);
                     responseObserver.onCompleted();
                 } else {
@@ -88,7 +96,7 @@ public class InventoryServiceImpl extends InventoryServiceGrpc.InventoryServiceI
                             .setSuccess(false)
                             .setMessage("Insufficient inventory")
                             .build();
-    
+
                     responseObserver.onNext(response);
                     responseObserver.onCompleted();
                 }
@@ -114,4 +122,8 @@ public class InventoryServiceImpl extends InventoryServiceGrpc.InventoryServiceI
         }
     }
 
-}   
+    public static InventoryServiceBlockingStub newBlockingStub(ManagedChannel channel) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'newBlockingStub'");
+    }
+}
