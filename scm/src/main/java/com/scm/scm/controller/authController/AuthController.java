@@ -21,6 +21,7 @@ import java.util.List;
 import javax.crypto.SecretKey;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/auth")
 @Tag(name = "Authentication", description = "Endpoints for user authentication and token management")
 public class AuthController {
