@@ -1,3 +1,5 @@
+scm/src/main/Java/rest/ProductController 
+
 package com.scm.scm.rest;
 
 import com.scm.scm.model.Product;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/api/products")
 public class ProductController {
 
