@@ -19,7 +19,7 @@ public class SecurityConfig {
 
         // Configure public routes
         http.authorizeExchange(exchange -> exchange
-                .pathMatchers("/api/", "/auth/", "/graphql/", "/grpc/").permitAll()
+                .pathMatchers("/api/**", "/auth/**", "/graphql/**", "/grpc/**").permitAll()
                 .anyExchange().authenticated() // All other routes require authentication
         );
 
