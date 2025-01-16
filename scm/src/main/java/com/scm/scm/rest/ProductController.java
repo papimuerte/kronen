@@ -1,5 +1,3 @@
-scm/src/main/Java/rest/ProductController 
-
 package com.scm.scm.rest;
 
 import com.scm.scm.model.Product;
