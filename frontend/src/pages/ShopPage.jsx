@@ -35,7 +35,7 @@ const ShopPage = () => {
                   <h5 className="card-title">{product.name}</h5>
                   <p className="card-text">{product.description}</p>
                   <p className="text-primary fw-bold">
-                    {product.unitPrice.toFixed(2)} {product.currency}
+                    {product.unitPrice} {product.currency}
                   </p>
                   <p className="text-secondary">
                     Available: {product.availableQuantity}
