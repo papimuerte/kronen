@@ -32,41 +32,46 @@ const CartPage = () => {
     });
   };
 
+  const totalAmount = cart.reduce((total, item) => total + item.unitPrice * item.quantity, 0);
+
   return (
     <div className="container mt-5">
       <h1 className="text-center mb-4">Your Cart</h1>
       {cart.length === 0 ? (
         <p className="text-center">Your cart is empty.</p>
       ) : (
-        <ul className="list-group">
-          {cart.map((item) => (
-            <li className="list-group-item d-flex justify-content-between align-items-center" key={item.productId}>
-              <div>
-                <h5>{item.name}</h5>
-                <div className="d-flex align-items-center">
-                  <label htmlFor={`quantity-${item.productId}`} className="me-2">Quantity:</label>
-                  <input
-                    type="number"
-                    id={`quantity-${item.productId}`}
-                    className="form-control"
-                    style={{ width: '80px' }}
-                    value={item.quantity}
-                    onChange={(e) => handleQuantityChange(item.productId, parseInt(e.target.value) || 1)}
-                    min="1"
-                  />
+        <div>
+          <ul className="list-group">
+            {cart.map((item) => (
+              <li className="list-group-item d-flex justify-content-between align-items-center" key={item.productId}>
+                <div>
+                  <h5>{item.name}</h5>
+                  <div className="d-flex align-items-center">
+                    <label htmlFor={`quantity-${item.productId}`} className="me-2">Quantity:</label>
+                    <input
+                      type="number"
+                      id={`quantity-${item.productId}`}
+                      className="form-control"
+                      style={{ width: '80px' }}
+                      value={item.quantity}
+                      onChange={(e) => handleQuantityChange(item.productId, parseInt(e.target.value) || 1)}
+                      min="1"
+                    />
+                  </div>
                 </div>
-              </div>
-              <button className="btn btn-danger btn-sm" onClick={() => handleRemoveItem(item.productId)}>
-                Remove
-              </button>
-            </li>
-          ))}
-        </ul>
+                <button className="btn btn-danger btn-sm" onClick={() => handleRemoveItem(item.productId)}>
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+          <h3 className="mt-4 text-end">
+            Total: {totalAmount.toFixed(2)} {cart[0]?.currency || 'USD'}
+          </h3>
+        </div>
       )}
     </div>
   );
 };
 
 export default CartPage;
-
-
