@@ -4,12 +4,24 @@ const CartPage = () => {
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
-    // Retrieve cart from localStorage on component mount
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
   }, []);
+
+  const handleQuantityChange = (productId, newQuantity) => {
+    setCart((prevCart) => {
+      const updatedCart = prevCart.map((item) =>
+        item.productId === productId
+          ? { ...item, quantity: Math.max(1, newQuantity) }
+          : item
+      );
+
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  };
 
   return (
     <div className="container mt-5">
@@ -19,8 +31,22 @@ const CartPage = () => {
       ) : (
         <ul className="list-group">
           {cart.map((item) => (
-            <li className="list-group-item" key={item.productId}>
-              {item.name}
+            <li className="list-group-item d-flex justify-content-between align-items-center" key={item.productId}>
+              <div>
+                <h5>{item.name}</h5>
+                <div className="d-flex align-items-center">
+                  <label htmlFor={`quantity-${item.productId}`} className="me-2">Quantity:</label>
+                  <input
+                    type="number"
+                    id={`quantity-${item.productId}`}
+                    className="form-control"
+                    style={{ width: '80px' }}
+                    value={item.quantity}
+                    onChange={(e) => handleQuantityChange(item.productId, parseInt(e.target.value) || 1)}
+                    min="1"
+                  />
+                </div>
+              </div>
             </li>
           ))}
         </ul>
@@ -30,3 +56,4 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
