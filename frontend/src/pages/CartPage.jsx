@@ -23,6 +23,15 @@ const CartPage = () => {
     });
   };
 
+  const handleRemoveItem = (productId) => {
+    setCart((prevCart) => {
+      const updatedCart = prevCart.filter((item) => item.productId !== productId);
+
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  };
+
   return (
     <div className="container mt-5">
       <h1 className="text-center mb-4">Your Cart</h1>
@@ -47,6 +56,9 @@ const CartPage = () => {
                   />
                 </div>
               </div>
+              <button className="btn btn-danger btn-sm" onClick={() => handleRemoveItem(item.productId)}>
+                Remove
+              </button>
             </li>
           ))}
         </ul>
@@ -56,4 +68,5 @@ const CartPage = () => {
 };
 
 export default CartPage;
+
 
