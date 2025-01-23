@@ -24,37 +24,29 @@ spring:
     gateway:
       routes:
         - id: rest-api
-          uri: http://localhost:8081
+          uri: lb://rest-service # Load Balancer für REST-API
           predicates:
-            - Path=/api/products/**
-
-        - id: auth-api
-          uri: http://localhost:8083
-          predicates:
-            - Path=/auth/**
+            - Path=/api/**
 
         - id: graphql-api
-          uri: http://localhost:8082
+          uri: lb://graphql-service # Load Balancer für GraphQL-API
           predicates:
             - Path=/graphql/**
 
-        - id: grpcInventory
-          uri: http://localhost:8084
+        - id: grpc-api
+          uri: lb://grpc-service # Load Balancer für gRPC
           predicates:
             - Path=/grpc/**
-          filters:
-            - name: RewritePath
-              args:
-                regexp: '/grpc/(?<segment>.*)'
-                replacement: '/${segment}'
-            - name: AddRequestHeader
-              args:
-                name: Content-Type
-                value: application/grpc+proto
-            - name: AddRequestHeader
-              args:
-                name: TE
-                value: trailers
+
+        - id: auth-login
+          uri: lb://auth-service # Load Balancer für Auth-Service
+          predicates:
+            - Path=/auth/**
+
+        - id: auth-register
+          uri: lb://auth-service # Load Balancer für Registrierung
+          predicates:
+            - Path=/auth/register
 
 management:
   endpoints:
@@ -66,3 +58,5 @@ logging:
   level:
     org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG
     org.springframework.cloud.gateway: DEBUG
+    com.scm.scm.gateway.TestGlobalFilter: DEBUG
+
