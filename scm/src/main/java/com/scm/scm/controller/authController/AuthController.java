@@ -16,7 +16,9 @@ import io.jsonwebtoken.security.Keys;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.crypto.SecretKey;
 
@@ -50,18 +52,19 @@ public class AuthController {
 
     @Operation(summary = "Login a user", description = "Authenticates a user and generates a JWT token upon successful login.")
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User loginRequest) {
+    public ResponseEntity<Object> login(@RequestBody User loginRequest) {
         try {
             List<User> users = userDataUtil.loadUsers();
             User user = users.stream()
                 .filter(u -> u.getUsername().equals(loginRequest.getUsername()) && u.getPassword().equals(loginRequest.getPassword()))
                 .findFirst()
                 .orElse(null);
-
+    
             if (user == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Ungültige Anmeldedaten.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid login credentials.");
             }
-
+    
+            // Generate JWT token
             @SuppressWarnings("deprecation")
             String jwt = Jwts.builder()
                 .setSubject(user.getUsername())
@@ -70,15 +73,30 @@ public class AuthController {
                 .claim("phone", user.getPhone())
                 .claim("address", user.getAddress())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 Stunde
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour expiration
                 .signWith(Keys.hmacShaKeyFor("MeinGeheimerSchlüsselMitMindestens32Zeichen".getBytes()), SignatureAlgorithm.HS256)
                 .compact();
-
-            return ResponseEntity.ok(jwt);
+    
+            // Dynamically set redirect based on the user's role
+            Map<String, String> links = new HashMap<>();
+            links.put("self", "/auth/login");
+            if ("admin".equalsIgnoreCase(user.getRole())) {
+                links.put("redirect", "/admin");
+            } else {
+                links.put("redirect", "/shop");
+            }
+    
+            // Return the response with token and links
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", jwt);
+            response.put("links", links);
+    
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fehler beim Zugriff auf Benutzerdaten.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error accessing user data.");
         }
     }
+
 
     @Operation(summary = "Validate a JWT token", description = "Verifies the validity of a JWT token and returns its claims.")
     @GetMapping("/validate")
