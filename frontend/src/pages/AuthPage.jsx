@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -9,6 +10,7 @@ const AuthPage = () => {
   });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,16 +44,20 @@ const AuthPage = () => {
         throw new Error(errorData.message || 'An error occurred');
       }
 
-      const contentType = response.headers.get('Content-Type');
-      let data;
+      const data = await response.json();
 
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
-        setMessage(data.message || 'Success!');
+      if (isLogin) {
+        // Store the token in localStorage
+        localStorage.setItem('token', data.token);
+
+        // Redirect the user based on the redirect link
+        if (data.links?.redirect) {
+          navigate(data.links.redirect); // Use the redirect route provided by the backend
+        } else {
+          setMessage('Login successful, but no redirect link provided.');
+        }
       } else {
-        data = await response.text();
-        setMessage('Login successful!');
-        localStorage.setItem('token', data);
+        setMessage('Registration successful!');
       }
 
       setFormData({ username: '', password: '', email: '' });
@@ -127,4 +133,3 @@ const AuthPage = () => {
 };
 
 export default AuthPage;
-   
