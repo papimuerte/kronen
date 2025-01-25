@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import navigation hook
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
+  const navigate = useNavigate(); // React Router hook for navigation
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
@@ -68,6 +70,11 @@ const CartPage = () => {
           <h3 className="mt-4 text-end">
             Total: {totalAmount.toFixed(2)} {cart[0]?.currency || 'USD'}
           </h3>
+          <div className="text-end mt-4">
+            <button className="btn btn-primary" onClick={() => navigate('/details')}>
+              Proceed to Details
+            </button>
+          </div>
         </div>
       )}
     </div>
