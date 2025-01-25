@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import jwtDecode from "jwt-decode";
 
-const DetailsPage = () => {
+const DetailsPage = ({ token }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -8,6 +9,23 @@ const DetailsPage = () => {
     companyName: '',
     address: '',
   });
+
+  useEffect(() => {
+    const token = localStorage.token;
+
+    if (token) {
+      // Decode the token and prefill the form
+      const decoded = jwtDecode(token);
+      console.log(decoded);
+      setFormData({
+        name: decoded.sub || '',
+        email: decoded.email || '',
+        address: decoded.address || '',
+        phoneNumber: decoded.phoneNumber || '',
+        companyName: decoded.companyName || '',
+      });
+    }
+  }, [token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
