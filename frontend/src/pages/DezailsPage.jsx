@@ -62,6 +62,28 @@ const DetailsPage = () => {
             required
           />
         </div>
+        <div className="mb-3">
+          <label htmlFor="address" className="form-label">Address</label>
+          <textarea
+            id="address"
+            name="address"
+            className="form-control"
+            value={formData.address}
+            onChange={handleChange}
+            required
+          ></textarea>
+        </div>
+        <div className="mb-3">
+          <label htmlFor="companyName" className="form-label">Company Name</label>
+          <textarea
+            id="companyName"
+            name="companyName"
+            className="form-control"
+            value={formData.companyName}
+            onChange={handleChange}
+            required
+          ></textarea>
+        </div>
         <button type="submit" className="btn btn-success">Submit Order</button>
       </form>
     </div>
