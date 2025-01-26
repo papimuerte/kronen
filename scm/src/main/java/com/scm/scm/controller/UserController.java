@@ -65,7 +65,7 @@ public class UserController {
                 if (user.getUsername().equals(id)) {
                     updateNonNullFields(updatedUser, user);
                     userDataUtil.saveUsers(users);
-                    return ResponseEntity.ok("Benutzer erfolgreich aktualisiert.");
+                    return ResponseEntity.ok("Registrierung erfolgreich aktualisiert.");
                 }
             }
             return ResponseEntity.notFound().build();
@@ -97,7 +97,7 @@ public class UserController {
         if (source.getPassword() != null) target.setPassword(source.getPassword());
         if (source.getRole() != null) target.setRole(source.getRole());
         if (source.getEmail() != null) target.setEmail(source.getEmail());
-        if (source.getPhone() != null) target.setPhone(source.getPhone());
+        if (source.getPhoneNumber() != null) target.setPhoneNumber(source.getPhoneNumber());
         if (source.getAddress() != null) target.setAddress(source.getAddress());
     }
 }
