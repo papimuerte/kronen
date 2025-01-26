@@ -28,6 +28,11 @@ spring:
           predicates:
             - Path=/api/**
 
+        - id: rest-api
+          uri: lb://rest-service # Load Balancer für REST-API
+          predicates:
+            - Path=/api/products/admin/**
+
         - id: graphql-api
           uri: lb://graphql-service # Load Balancer für GraphQL-API
           predicates:
@@ -59,4 +64,3 @@ logging:
     org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG
     org.springframework.cloud.gateway: DEBUG
     com.scm.scm.gateway.TestGlobalFilter: DEBUG
-

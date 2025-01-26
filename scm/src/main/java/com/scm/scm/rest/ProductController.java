@@ -47,7 +47,7 @@ public class ProductController {
     }
 
     // Neues Produkt hinzufügen (CREATE)
-    @PostMapping
+    @PostMapping("/admin/add")
     public ResponseEntity<String> addProduct(@RequestBody Product newProduct) {
         try {
             List<Product> products = productDataUtil.loadProducts();
@@ -59,7 +59,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/admin/{id}")
     public ResponseEntity<String> updateProduct(@PathVariable String id, @RequestBody Product updatedProduct) {
         try {
             List<Product> products = productDataUtil.loadProducts();
@@ -103,7 +103,7 @@ public class ProductController {
     }
 
     // Produkt löschen (DELETE)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable String id) {
         try {
             List<Product> products = productDataUtil.loadProducts();
