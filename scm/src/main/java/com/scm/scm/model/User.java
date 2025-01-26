@@ -1,25 +1,32 @@
 package com.scm.scm.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 public class User {
     private String username;
     private String password;
-    private String role;
+    private String role = "USER";
     private String email;    // Neu hinzugefügt
-    private String phone;    // Neu hinzugefügt
+
+    @JsonAlias("phone") // Accepts both "phone" and "phoneNumber"
+    private String phoneNumber;    // Neu hinzugefügt
+    
     private String address;  // Neu hinzugefügt
+    private String companyName;
 
     // Default constructor
     public User() {
     }
 
     // Parameterized constructor
-    public User(String username, String password, String role, String email, String phone, String address) {
+    public User(String username, String password, String role, String email, String phoneNumber, String address, String companyName) {
         this.username = username;
         this.password = password;
         this.role = role;
         this.email = email;
-        this.phone = phone;
+        this.phoneNumber = phoneNumber;
         this.address = address;
+        this.companyName = companyName;
     }
 
     // Getters and Setters
@@ -55,12 +62,12 @@ public class User {
         this.email = email;
     }
 
-    public String getPhone() {  // Getter für phone
-        return phone;
+    public String getPhoneNumber() {  // Getter für phone
+        return phoneNumber;
     }
 
-    public void setPhone(String phone) {  // Setter für phone
-        this.phone = phone;
+    public void setPhoneNumber(String phoneNumber) {  // Setter für phone
+        this.phoneNumber = phoneNumber;
     }
 
     public String getAddress() {  // Getter für address
@@ -71,6 +78,14 @@ public class User {
         this.address = address;
     }
 
+    public String getcompanyName() {  // Getter für companyName
+        return companyName;
+    }
+
+    public void setcompanyName(String companyName) {  // Setter für companyName
+        this.companyName = companyName;
+    }
+
     // toString method (optional for debugging)
     @Override
     public String toString() {
@@ -79,8 +94,9 @@ public class User {
                 ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
                 ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
                 ", address='" + address + '\'' +
+                ", companyName='" + companyName + '\'' +
                 '}';
     }
 }
