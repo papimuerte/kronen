@@ -36,7 +36,7 @@ public class AuthController {
 
     @Operation(summary = "Register a new user", description = "Allows a new user to register with a unique username and email.")
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
+    public ResponseEntity<Object> register(@RequestBody User user) {
         try {
             List<User> users = userDataUtil.loadUsers();
             if (users.stream().anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
@@ -44,9 +44,9 @@ public class AuthController {
             }
             users.add(user);
             userDataUtil.saveUsers(users);
-            return ResponseEntity.ok("Benutzer erfolgreich registriert.");
+            return ResponseEntity.ok("Benutzer erfolgreich registriert. Jetzt Einloggen");
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Fehler beim Zugriff auf Benutzerdaten.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
     }
 
@@ -70,8 +70,9 @@ public class AuthController {
                 .setSubject(user.getUsername())
                 .claim("role", user.getRole())
                 .claim("email", user.getEmail())
-                .claim("phone", user.getPhone())
+                .claim("phoneNumber", user.getPhoneNumber())
                 .claim("address", user.getAddress())
+                .claim("companyName", user.getcompanyName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour expiration
                 .signWith(Keys.hmacShaKeyFor("MeinGeheimerSchlüsselMitMindestens32Zeichen".getBytes()), SignatureAlgorithm.HS256)
@@ -96,7 +97,6 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error accessing user data.");
         }
     }
-
 
     @Operation(summary = "Validate a JWT token", description = "Verifies the validity of a JWT token and returns its claims.")
     @GetMapping("/validate")
