@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const DetailsPage = ({ token }) => {
   const [formData, setFormData] = useState({
