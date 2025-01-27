@@ -1,5 +1,6 @@
 type Query {
-  orders(customerUsername: String!): [Order!]!
+  ordersByCustomer(customerUsername: String!): [Order!]! # Retrieve orders by customerUsername
+  allOrders: [Order!]! # Retrieve all orders
   order(id: String!): Order
 }
 
@@ -14,10 +15,10 @@ type Order {
   totalAmount: Float!
   status: String!
   createdAt: String!
-  companyName: String!
-  email: String!
-  address: String!
-  phoneNumber: String!
+  companyName: String
+  email: String
+  address: String
+  phoneNumber: String
   notes: String
 }
 
