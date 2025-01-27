@@ -1,12 +1,18 @@
 package com.scm.scm.config;
 
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.execution.RuntimeWiringConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.filter.CorsFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.scm.scm.graphql.OrderInput;
 import com.scm.scm.graphql.OrderResolver;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 
 @Configuration
 public class GraphQLConfig {
@@ -17,11 +23,11 @@ public class GraphQLConfig {
                 .type("Query", typeWiring -> typeWiring
                         .dataFetcher("orders", env -> {
                             String customerUsername = env.getArgument("customerUsername");
-                            return orderResolver.getOrders(customerUsername);
+                            return orderResolver.ordersByCustomer(customerUsername);
                         })
                         .dataFetcher("order", env -> {
                             String id = env.getArgument("id");
-                            return orderResolver.getOrder(id);
+                            return orderResolver.order(id);
                         }))
                 .type("Mutation", typeWiring -> typeWiring
                         .dataFetcher("createOrder", env -> {
@@ -32,3 +38,4 @@ public class GraphQLConfig {
                         }));
     }
 }
+
