@@ -1,3 +1,4 @@
+
 type Query {
   ordersByCustomer(customerUsername: String!): [Order!]! # Retrieve orders by customerUsername
   allOrders: [Order!]! # Retrieve all orders
@@ -31,10 +32,17 @@ type OrderProduct {
 
 input OrderInput {
   customerUsername: String!
+  companyName: String # Optional
+  email: String # Optional
+  address: String # Optional
+  phoneNumber: String # Optional
+  notes: String # Optional
   products: [OrderProductInput!]!
 }
 
 input OrderProductInput {
   productId: String!
   quantity: Int!
+  name: String # Optional
+  unitPrice: Float # Optional
 }
