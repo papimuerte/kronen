@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { jwtDecode } from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 const DetailsPage = ({ token }) => {
   const [formData, setFormData] = useState({
@@ -35,9 +36,61 @@ const DetailsPage = ({ token }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Order Details:', formData);
+
+    // GraphQL mutation string
+    const mutation = `
+      mutation CreateOrder($input: OrderInput!) {
+        createOrder(input: $input) {
+          id
+          customerUsername
+          totalAmount
+          status
+          createdAt
+        }
+      }
+    `;
+
+    // Prepare the input data for the mutation
+    const input = {
+      customerUsername: formData.name,
+      products: [
+        {
+          productId: "J001", // Replace with actual product ID
+          quantity: 1,                   // Replace with desired quantity
+        }
+      ],
+    };
+
+    try {
+      // Send the GraphQL mutation request
+      const response = await fetch("http://localhost:8080/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: mutation, variables: { input } }),
+      });
+
+      console.log(response)
+
+      if (!response.ok) {
+        throw new Error("Failed to create the order.");
+      }
+
+      const responseData = await response.json();
+
+      if (responseData.errors) {
+        throw new Error(responseData.errors[0].message || "Error creating order.");
+      }
+
+      console.log("Order created successfully:", responseData.data.createOrder);
+      alert("Order created successfully!");
+    } catch (error) {
+      console.error("Error creating order:", error.message);
+      alert("Failed to create the order. Please try again.");
+    }
   };
 
   return (
