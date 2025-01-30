@@ -1,3 +1,4 @@
+
 package com.scm.scm.graphql;
 
 import com.scm.scm.grpc.InventoryServiceGrpc;
@@ -65,6 +66,7 @@ public class OrderResolver {
     @MutationMapping
     public Order createOrder(@Argument OrderInput input) throws IOException {
         // Validate inventory and update stock using gRPC
+
         List<OrderProduct> products = input.getProducts().stream()
                 .map(productInput -> {
                     // Check product availability via gRPC
@@ -97,6 +99,7 @@ public class OrderResolver {
                 })
                 .collect(Collectors.toList());
 
+
         // Create a new order
         Order newOrder = new Order(
                 UUID.randomUUID().toString(),
@@ -104,8 +107,14 @@ public class OrderResolver {
                 products,
                 calculateTotalAmount(products),
                 "Pending",
-                LocalDateTime.now().toString()
+                LocalDateTime.now().toString(),
+                input.getCompanyName(),
+                input.getEmail(),
+                input.getAddress(),
+                input.getPhoneNumber(),
+                input.getNotes()
         );
+            
 
         // Save the new order
         List<Order> orders = orderDataUtil.loadOrders();
@@ -122,4 +131,3 @@ public class OrderResolver {
                 .sum();
     }
 }
-
