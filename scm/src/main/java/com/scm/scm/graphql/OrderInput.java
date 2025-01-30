@@ -1,5 +1,3 @@
-scm\src\main\java\com\scm\scm\graphql\OrderInput.java
-
 package com.scm.scm.graphql;
 
 import java.util.List;
