@@ -19,7 +19,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is loaded
   
   // AdminRoute 
   const AdminRoute = ({ element, token }) => {
-    return token?.role === "admin" ? element : <Navigate to="/" replace />;
+    return token?.role === "ADMIN" ? element : <Navigate to="/" replace />;
   };
 
 
@@ -30,6 +30,7 @@ const App = () => {
 
   const decodedToken = jwtDecode(token);
 
+  console.log(decodedToken)
 
 
   return (
