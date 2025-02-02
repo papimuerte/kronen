@@ -1,5 +1,3 @@
-scm\src\main\java\com\scm\scm\controller\UserController.java
-
 package com.scm.scm.controller;
 
 import com.scm.scm.model.User;
