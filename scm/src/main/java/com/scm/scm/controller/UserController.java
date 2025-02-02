@@ -1,3 +1,5 @@
+scm\src\main\java\com\scm\scm\controller\UserController.java
+
 package com.scm.scm.controller;
 
 import com.scm.scm.model.User;
@@ -6,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,76 +24,66 @@ public class UserController {
         this.userDataUtil = userDataUtil;
     }
 
-    @Operation(
-        summary = "Get all users",
-        description = "Retrieves a list of all registered users."
-    )
+    @Operation(summary = "Get all users", description = "Retrieves a list of all registered users.")
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        try {
-            List<User> users = userDataUtil.loadUsers();
-            return ResponseEntity.ok(users);
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+    public Mono<ResponseEntity<List<User>>> getAllUsers() {
+        return Mono.fromCallable(userDataUtil::loadUsers)
+                   .map(users -> ResponseEntity.ok(users))
+                   .onErrorResume(e -> Mono.just(ResponseEntity.internalServerError().build()));
     }
 
-    @Operation(
-        summary = "Get user by ID",
-        description = "Fetches details of a specific user using their username."
-    )
+    @Operation(summary = "Get user by ID", description = "Fetches details of a specific user using their username.")
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable String id) {
-        try {
-            List<User> users = userDataUtil.loadUsers();
-            return users.stream()
-                    .filter(user -> user.getUsername().equals(id))
-                    .findFirst()
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+    public Mono<ResponseEntity<User>> getUserById(@PathVariable String id) {
+        return Mono.fromCallable(userDataUtil::loadUsers)
+                .map(users -> users.stream()
+                        .filter(user -> user.getUsername().equals(id))
+                        .findFirst()
+                        .map(ResponseEntity::ok)
+                        .orElse(ResponseEntity.notFound().build()))
+                .onErrorResume(e -> Mono.just(ResponseEntity.internalServerError().build()));
     }
+    
 
-    @Operation(
-        summary = "Update user by ID",
-        description = "Updates the details of a specific user using their username. Only non-null fields will be updated."
-    )
+    @Operation(summary = "Update user by ID", description = "Updates the details of a specific user using their username. Only non-null fields will be updated.")
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable String id, @RequestBody User updatedUser) {
-        try {
-            List<User> users = userDataUtil.loadUsers();
-            for (User user : users) {
-                if (user.getUsername().equals(id)) {
-                    updateNonNullFields(updatedUser, user);
-                    userDataUtil.saveUsers(users);
-                    return ResponseEntity.ok("Registrierung erfolgreich aktualisiert.");
-                }
-            }
-            return ResponseEntity.notFound().build();
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Fehler beim Aktualisieren des Benutzers.");
-        }
+    public Mono<ResponseEntity<? extends Object>> updateUser(@PathVariable String id, @RequestBody User updatedUser) {
+        return Mono.fromCallable(userDataUtil::loadUsers)
+                   .flatMap(users -> {
+                       for (User user : users) {
+                           if (user.getUsername().equals(id)) {
+                               updateNonNullFields(updatedUser, user);
+                               return saveUsersMono(users)
+                                   .then(Mono.just(ResponseEntity.ok("Registrierung erfolgreich aktualisiert.")));
+                           }
+                       }
+                       return Mono.just(ResponseEntity.notFound().build());
+                   })
+                   .onErrorResume(e -> Mono.just(ResponseEntity.internalServerError().body("Fehler beim Aktualisieren des Benutzers.")));
+    }
+    
+    @Operation(summary = "Delete user by ID", description = "Deletes a specific user using their username.")
+    @DeleteMapping("/{id}")
+    public Mono<ResponseEntity<? extends Object>> deleteUser(@PathVariable String id) {
+        return Mono.fromCallable(userDataUtil::loadUsers)
+                   .flatMap(users -> {
+                       boolean removed = users.removeIf(user -> user.getUsername().equals(id));
+                       if (removed) {
+                           return saveUsersMono(users).map(saved -> ResponseEntity.ok("Benutzer erfolgreich gelöscht."));
+                       }
+                       return Mono.just(ResponseEntity.notFound().build());
+                   })
+                   .onErrorResume(e -> Mono.just(ResponseEntity.internalServerError().body("Fehler beim Löschen des Benutzers.")));
     }
 
-    @Operation(
-        summary = "Delete user by ID",
-        description = "Deletes a specific user using their username."
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable String id) {
-        try {
-            List<User> users = userDataUtil.loadUsers();
-            boolean removed = users.removeIf(user -> user.getUsername().equals(id));
-            if (removed) {
+    private Mono<Void> saveUsersMono(List<User> users) {
+        return Mono.fromRunnable(() -> {
+            try {
                 userDataUtil.saveUsers(users);
-                return ResponseEntity.ok("Benutzer erfolgreich gelöscht.");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-            return ResponseEntity.notFound().build();
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Fehler beim Löschen des Benutzers.");
-        }
+        });
     }
 
     private void updateNonNullFields(User source, User target) {
