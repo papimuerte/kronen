@@ -20,7 +20,7 @@ public class FileStorage<T> {
     // Read data from the file
     public List<T> readData(Class<T> clazz) throws IOException {
         if (!file.exists()) {
-            return new ArrayList<>();
+            return new ArrayList<>(); 
         }
         return objectMapper.readValue(file, objectMapper.getTypeFactory().constructCollectionType(List.class, clazz));
     }
