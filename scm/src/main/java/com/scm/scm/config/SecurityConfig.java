@@ -19,7 +19,7 @@ public class SecurityConfig {
 
         // Configure public routes
         http.authorizeExchange(exchange -> exchange
-                .pathMatchers("/api/**", "/auth/**", "/graphql/**", "/grpc/**").permitAll()
+                .pathMatchers("/api/", "/auth/", "/graphql/", "/grpc/", "/v3/", "/swagger-ui.html", "/webjars/").permitAll()
                 .anyExchange().authenticated() // All other routes require authentication
         );
 
@@ -30,4 +30,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
