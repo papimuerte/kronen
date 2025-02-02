@@ -20,6 +20,7 @@ public class ProductController {
         this.productDataUtil = productDataUtil;
     }
 
+    
     // Alle Produkte abrufen (READ)
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
