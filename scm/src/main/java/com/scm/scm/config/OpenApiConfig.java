@@ -23,22 +23,19 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("WebFlux API - GraphQL")
+                        .title("WebFlux API")
                         .version("1.0")
                         .description("""
-                                ## Dokumentation der GraphQL API  
-                                
-                                Diese API basiert auf **GraphQL**, wodurch alle Anfragen über einen **einzigen Endpunkt (`/graphql`)** verarbeitet werden.  
-                                
-                                ### Nutzung von Swagger UI für GraphQL:
-                                - **Queries:** Dienen zum Abrufen von Daten.
-                                - **Mutations:** Werden verwendet, um Daten zu ändern oder neue Einträge zu erstellen.
-                                - Wählen Sie im **Request Body** aus, ob Sie eine Query oder Mutation ausführen möchten.
-                                
-                                **Hinweis:**  
-                                Die Anfrage muss im **gültigen JSON-Format** gesendet werden.  
-                                
-                                ### Beispiel für eine Query (Daten abrufen)
+                                ## Willkommen zur API-Dokumentation 🚀  
+                                 
+                                Diese API unterstützt sowohl **GraphQL** als auch **gRPC**.  
+                                 
+                                ### Verwendung von GraphQL:
+                                - **Abfragen (Queries):** Mit `query` können Daten abgerufen werden.
+                                - **Mutationen (Mutations):** Mit `mutation` können Daten geändert werden.
+                                - **Alle Anfragen müssen im gültigen JSON-Format gesendet werden.**
+
+                                Example Query Request:
                                 ```json
                                 {
                                   "query": "query Order { ordersByCustomer(customerUsername: \\"user2\\") { id customerUsername totalAmount status createdAt products { productId name quantity unitPrice } } }",
@@ -46,53 +43,98 @@ public class OpenApiConfig {
                                 }
                                 ```
                                 
-                                ### Beispiel für eine Mutation (Daten ändern oder erstellen)
+                                Example Mutation Request:
                                 ```json
                                 {
                                   "query": "mutation CreateOrder { createOrder(input: {customerUsername: \\"lala\\", companyName: \\"lala\\", email: \\"lala@gmail.com\\", address: \\"Lala Street\\", phoneNumber: \\"123456789\\", notes: \\"lala\\", products: [{ productId: \\"J001\\", quantity: 2 }]}) { id customerUsername totalAmount status createdAt products { productId name quantity unitPrice } } }",
                                   "variables": {}
                                 }
                                 ```
+                                 
+                                ### Verwendung von gRPC:
+                                - **Swagger UI unterstützt kein direktes gRPC-Testing.**
+                                - **Alternativ können gRPC-Endpunkte in Postman mit folgenden JSON-Bodies getestet werden:**
+                                
+                                **Bestand prüfen:**
+                                ```json
+                                {
+                                    "productId": "J002"
+                                }
+                                ```
+                                
+                                **Bestand aktualisieren:**
+                                ```json
+                                {
+                                    "productId": "J002",
+                                    "quantity": 10
+                                }
+                                ```
                                 """))
-                .paths(getGraphQLPaths());
+                .paths(getPaths());
     }
 
-    private Paths getGraphQLPaths() {
+    private Paths getPaths() {
         Paths paths = new Paths();
 
         paths.addPathItem("/graphql", new PathItem()
                 .post(new io.swagger.v3.oas.models.Operation()
-                        .summary("GraphQL Query und Mutation Endpunkt")
+                        .summary("GraphQL Abfrage- und Mutations-Endpunkt")
                         .description("""
-                                Dieser Endpunkt verarbeitet sowohl **GraphQL Queries** als auch **Mutations**.  
-                                - **Queries** werden verwendet, um Daten aus der API abzurufen.  
-                                - **Mutations** dienen dazu, Daten zu verändern oder neue Einträge zu erstellen.  
-                                - Wählen Sie im **Request Body** aus, welche Art von Anfrage Sie senden möchten.
+                                Dieser Endpunkt unterstützt **GraphQL-Abfragen und -Mutationen**.  
+                                - Verwenden Sie **GraphQL-Abfragen**, um Daten abzurufen.  
+                                - Verwenden Sie **GraphQL-Mutationen**, um Daten zu ändern.  
+                                - Wählen Sie aus den **unten stehenden Beispielanfragen** eine passende Anfrage aus.
                                 """)
-                        .requestBody(new RequestBody()
-                                .content(new Content()
-                                        .addMediaType("application/json",
-                                                new MediaType()
-                                                        .schema(new Schema<>()
-                                                                .oneOf(List.of(
-                                                                        // Option 1: GraphQL Query ohne Beispiel im Request Body
-                                                                        new Schema<>()
-                                                                                .description("GraphQL Query (Abrufen von Daten)")
-                                                                                .addProperty("query", new StringSchema()),
-
-                                                                        // Option 2: GraphQL Mutation ohne Beispiel im Request Body
-                                                                        new Schema<>()
-                                                                                .description("GraphQL Mutation (Verändern oder Erstellen von Daten)")
-                                                                                .addProperty("query", new StringSchema())
-                                                                ))
-                                                        ))))
                         .responses(new ApiResponses()
                                 .addApiResponse("200", new ApiResponse()
                                         .description("Erfolgreiche Antwort")
                                         .content(new Content()
                                                 .addMediaType("application/json", new MediaType()
                                                         .schema(new Schema<>()
-                                                                .addProperty("data", new StringSchema()))))))));
+                                                                .addProperty("data", new StringSchema()
+                                                                        .example("""
+                                                                                {
+                                                                                    "data": {
+                                                                                        "ordersByCustomer": [
+                                                                                            {
+                                                                                                "id": "101",
+                                                                                                "customerUsername": "user1",
+                                                                                                "totalAmount": 5500,
+                                                                                                "status": "Abgeschlossen",
+                                                                                                "createdAt": "2024-12-20T10:30:00Z",
+                                                                                                "products": [
+                                                                                                    {
+                                                                                                        "productId": "J001",
+                                                                                                        "name": "Diamant-Verlobungsring",
+                                                                                                        "quantity": 2,
+                                                                                                        "unitPrice": 2500
+                                                                                                    }
+                                                                                                ]
+                                                                                            }
+                                                                                        ]
+                                                                                    }
+                                                                                }
+                                                                                """)))))))));
+
+        // gRPC-Endpunkt-Dokumentation (nicht testbar in Swagger, nur informativ)
+        paths.addPathItem("localhost:9090/InventoryService/CheckAvailability", new PathItem()
+                .post(new io.swagger.v3.oas.models.Operation()
+                        .summary("gRPC: Produktverfügbarkeit prüfen")
+                        .description("""
+                                Diese Methode wird verwendet, um die Verfügbarkeit eines Produkts zu prüfen.  
+                                **Kann nicht direkt in Swagger UI getestet werden.**  
+                                
+                                **Alternativ kann dieser Endpunkt in Postman getestet werden, indem folgender JSON-Body gesendet wird:**
+                                ```json
+                                {
+                                    "productId": "J002"
+                                }
+                                ```
+                                """)
+                        .responses(new ApiResponses()
+                                .addApiResponse("200", new ApiResponse()
+                                        .description("Antwort vom gRPC-Server (nur über gRPC-Client abrufbar)")))));
+
 
         return paths;
     }
