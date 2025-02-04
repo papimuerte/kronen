@@ -135,6 +135,33 @@ public class OpenApiConfig {
                                 .addApiResponse("200", new ApiResponse()
                                         .description("Antwort vom gRPC-Server (nur über gRPC-Client abrufbar)")))));
 
+        paths.addPathItem("/localhost:9090/InventoryService/UpdateInventory", new PathItem()
+                .post(new io.swagger.v3.oas.models.Operation()
+                        .summary("gRPC: Inventar aktualisieren")
+                        .description("""
+                                Diese Methode wird verwendet, um das Inventar eines Produkts zu aktualisieren.  
+                                **Kann nicht direkt in Swagger UI getestet werden.**  
+                                
+                                **Alternativ kann dieser Endpunkt in Postman getestet werden, indem folgender JSON-Body gesendet wird:**
+                                ```json
+                                {
+                                    "productId": "J002",
+                                    "quantity": 10
+                                }
+                                ```
+                                
+                                **Erwartete Antwort:**
+                                ```json
+                                {
+                                    "productId": "J002",
+                                    "success": true,
+                                    "message": "Inventar erfolgreich aktualisiert"
+                                }
+                                ```
+                                """)
+                        .responses(new ApiResponses()
+                                .addApiResponse("200", new ApiResponse()
+                                        .description("Antwort vom gRPC-Server (nur über gRPC-Client abrufbar)")))));
 
         return paths;
     }
