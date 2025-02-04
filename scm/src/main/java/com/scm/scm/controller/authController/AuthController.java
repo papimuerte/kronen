@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 
 @RestController
-@CrossOrigin(origins = "*", allowCredentials = "true")
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/auth")
 @Tag(name = "Authentication", description = "Endpoints for user authentication and token management")
 public class AuthController {
@@ -81,6 +81,7 @@ public class AuthController {
     
             // Generate JWT token
             SecretKey secretKey = Keys.hmacShaKeyFor("MeinGeheimerSchlüsselMitMindestens32Zeichen".getBytes());
+            @SuppressWarnings("deprecation")
             String jwt = Jwts.builder()
                     .setSubject(user.getUsername())
                     .claim("role", user.getRole())
