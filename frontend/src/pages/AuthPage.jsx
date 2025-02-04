@@ -97,6 +97,34 @@ const AuthPage = () => {
             />
           </div>
           {!isLogin && (
+              <div className="mb-3">
+                <label className="form-label">Phone Number</label>
+                <input
+                  type="tel"
+                  className="form-control"
+                  placeholder="Enter your phone number"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+          )}
+          {!isLogin && (
+              <div className="mb-3">
+                <label className="form-label">Address</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter your address"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleChange}
+                  required
+                />          
+              </div>
+          )}
+          {!isLogin && (
             <div className="mb-3">
               <label className="form-label">Email</label>
               <input
@@ -109,6 +137,20 @@ const AuthPage = () => {
                 required
               />
             </div>
+          )}
+          {!isLogin && (
+              <div className="mb-3">
+                <label className="form-label">Company Name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter your company name"
+                  name="getcompanyName"
+                  value={formData.getcompanyName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
           )}
           <button type="submit" className="btn btn-primary w-100">
             {isLogin ? 'Login' : 'Register'}
