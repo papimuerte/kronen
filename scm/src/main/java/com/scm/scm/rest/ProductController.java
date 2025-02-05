@@ -1,7 +1,8 @@
 package com.scm.scm.rest;
 
-import com.scm.scm.model.Product;
-import com.scm.scm.util.ProductDataUtil;
+import com.scm.scm.rest.model.Product;
+import com.scm.scm.rest.util.ProductDataUtil;
+
 import java.io.IOException;
 
 import java.util.List;

@@ -1,0 +1,81 @@
+# server:
+#   port: 8080
+#   http2:
+#     enabled: true
+
+# grpc:
+#   server:
+#     port: 9090
+#   client:
+#     inventory-service:
+#       address: "localhost:9090"
+#       enableKeepAlive: true
+#       keepAliveWithoutCalls: true
+
+
+# springdoc:
+#   api-docs:
+#     enabled: true
+#     path: /v3/api-docs
+#   swagger-ui:
+#     enabled: true
+#     path: /swagger-ui.html
+#   webjars:
+#     prefix: /webjars/
+
+
+# spring:
+#   graphql:
+#     cors:
+#       allow-credentials: true
+#       allowed-origins:
+#         - http://localhost:3000
+#   application:
+#     name: scm
+#   autoconfigure:
+#     exclude:
+#       - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+#   cloud:
+#     gateway:
+#       routes:
+#         - id: rest-api
+#           uri: lb://rest-service # Load Balancer für REST-API
+#           predicates:
+#             - Path=/api/**
+
+#         - id: rest-api
+#           uri: lb://rest-service # Load Balancer für REST-API
+#           predicates:
+#             - Path=/api/products/admin/**
+
+#         - id: graphql-api
+#           uri: lb://graphql-service # Load Balancer für GraphQL-API
+#           predicates:
+#             - Path=/graphql/**
+
+#         - id: grpc-api
+#           uri: lb://grpc-service # Load Balancer für gRPC
+#           predicates:
+#             - Path=/grpc/**
+
+#         - id: auth-login
+#           uri: lb://auth-service # Load Balancer für Auth-Service
+#           predicates:
+#             - Path=/auth/**
+
+#         - id: auth-register
+#           uri: lb://auth-service # Load Balancer für Registrierung
+#           predicates:
+#             - Path=/auth/register
+
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: gateway, health, metrics
+
+# logging:
+#   level:
+#     org.springframework.web.reactive.function.client.ExchangeFunctions: DEBUG
+#     org.springframework.cloud.gateway: DEBUG
+#     com.scm.scm.gateway.TestGlobalFilter: DEBUG
