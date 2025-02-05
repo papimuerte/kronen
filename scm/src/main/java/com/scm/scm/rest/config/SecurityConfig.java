@@ -15,7 +15,7 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable) // Disable CSRF if needed
                 .authorizeExchange(auth -> auth
-                        .pathMatchers("/auth/**", "/api/**","/users/**").permitAll() // Allow public access to auth endpoints
+                        .pathMatchers("/auth/**", "/api/**","/users/**", "/v3/**","/**").permitAll() // Allow public access to auth endpoints
                         .anyExchange().authenticated()
                 )
                 .build();
