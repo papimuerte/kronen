@@ -7,6 +7,10 @@ const AuthPage = () => {
     username: '',
     password: '',
     email: '',
+    role: '',
+    phoneNumber: '',
+    address: '',
+    companyName: '',
   });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -35,6 +39,11 @@ const AuthPage = () => {
         body: JSON.stringify({
           username: formData.username,
           password: formData.password,
+          email: formData.email,
+          role: formData.role,
+          phoneNumber: formData.phoneNumber,
+          address: formData.address,
+          companyName: formData.companyName,
           ...(isLogin ? {} : { email: formData.email }),
         }),
       });
@@ -145,8 +154,8 @@ const AuthPage = () => {
                   type="text"
                   className="form-control"
                   placeholder="Enter your company name"
-                  name="getcompanyName"
-                  value={formData.getcompanyName}
+                  name="companyName"
+                  value={formData.companyName}
                   onChange={handleChange}
                   required
                 />
