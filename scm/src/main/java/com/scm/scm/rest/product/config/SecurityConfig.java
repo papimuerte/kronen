@@ -1,4 +1,4 @@
-package com.scm.scm.rest.config;
+package com.scm.scm.rest.product.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

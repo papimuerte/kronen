@@ -1,4 +1,4 @@
-package com.scm.scm.rest.config;
+package com.scm.scm.rest.auth.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.config.EnableWebFlux;

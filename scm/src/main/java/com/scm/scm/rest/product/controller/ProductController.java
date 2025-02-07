@@ -1,7 +1,4 @@
-package com.scm.scm.rest;
-
-import com.scm.scm.rest.model.Product;
-import com.scm.scm.rest.util.ProductDataUtil;
+package com.scm.scm.rest.product.controller;
 
 import java.io.IOException;
 
@@ -9,6 +6,9 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.scm.scm.rest.product.model.Product;
+import com.scm.scm.rest.product.util.ProductDataUtil;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")

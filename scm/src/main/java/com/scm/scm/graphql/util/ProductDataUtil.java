@@ -2,7 +2,7 @@ package com.scm.scm.graphql.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.scm.scm.rest.model.Product;
+import com.scm.scm.rest.product.model.Product;
 
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.scm.scm.rest.model;
+package com.scm.scm.rest.product.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

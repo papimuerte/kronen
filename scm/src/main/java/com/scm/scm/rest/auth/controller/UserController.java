@@ -1,12 +1,13 @@
-package com.scm.scm.rest.controller;
-
-import com.scm.scm.rest.model.User;
-import com.scm.scm.rest.util.UserDataUtil;
+package com.scm.scm.rest.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.scm.scm.rest.product.model.User;
+import com.scm.scm.rest.auth.util.UserDataUtil;
+
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;

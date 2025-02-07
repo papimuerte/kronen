@@ -1,4 +1,4 @@
-package com.scm.scm.rest.controller;
+package com.scm.scm.rest.product.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,4 +1,4 @@
-package com.scm.scm.rest.controller;
+package com.scm.scm.rest.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -8,11 +8,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.scm.scm.rest.product.model.User;
+import com.scm.scm.rest.auth.util.UserDataUtil;
+
 import reactor.core.publisher.Mono;
-
-import com.scm.scm.rest.model.User;
-import com.scm.scm.rest.util.UserDataUtil;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

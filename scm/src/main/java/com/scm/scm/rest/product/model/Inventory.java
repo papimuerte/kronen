@@ -1,4 +1,4 @@
-package com.scm.scm.rest.model;
+package com.scm.scm.rest.product.model;
 
 public class Inventory {
     private Long id;

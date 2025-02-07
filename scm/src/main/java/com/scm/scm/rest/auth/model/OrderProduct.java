@@ -1,4 +1,4 @@
-package com.scm.scm.rest.model;
+package com.scm.scm.rest.auth.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
