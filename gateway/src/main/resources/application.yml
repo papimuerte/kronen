@@ -1,0 +1,45 @@
+server:
+  port: 8080  # Gateway server port
+
+spring:
+  cloud:
+    gateway:
+      globalcors:  # Global CORS configuration
+        corsConfigurations:
+          '[/**]': 
+            allowedOrigins: "http://localhost:3000"  # Allow frontend requests
+            allowedMethods:  # Allowed HTTP methods
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"  # Allow all headers
+            allowCredentials: true  # Allow credentials
+
+      routes:
+        - id: auth-service
+          uri: http://localhost:8084  # Authentication service
+          predicates:
+            - Path=/auth/**  # Routes requests to /auth/*
+
+        - id: product-service
+          uri: http://localhost:8085  # Product management service
+          predicates:
+            - Path=/api/products/**  # Routes requests to /api/products/*
+
+        - id: user-service
+          uri: http://localhost:8083  # User management service
+          predicates:
+            - Path=/api/users/**  # Routes requests to /api/users/*
+
+        - id: graphql-service
+          uri: http://localhost:8082  # GraphQL API service
+          predicates:
+            - Path=/graphql  # Routes requests to /graphql
+
+logging:
+  level:
+    org.springframework.security: DEBUG  # Enable security logs
+    org.springframework.web: DEBUG  # Enable web logs
+    org.springframework.cloud.gateway: DEBUG  # Enable gateway logs
