@@ -21,7 +21,7 @@ public class Product {
     private Integer leadTimeDays;
     private Integer weightGram;
 
-    // ✅ Explizite Getter und Setter für productId
+    // Explicit Getter and Setter for productId
     public String getproductId() {
         return productId;
     }

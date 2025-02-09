@@ -1,4 +1,7 @@
+
 package com.dataservice.model;
+
+// Represents a product within an order, including product details and pricing.
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +14,7 @@ public class OrderProduct {
     private int quantity;
     private Double unitPrice;
 
-    // Constructor for order-specific products
+    // Constructor for initializing order product details
     public OrderProduct(String productId, String name, int quantity, Double unitPrice) {
         this.productId = productId;
         this.name = name;
@@ -19,3 +22,4 @@ public class OrderProduct {
         this.unitPrice = unitPrice;
     }
 }
+

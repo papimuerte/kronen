@@ -1,4 +1,7 @@
+
 package com.dataservice.model;
+
+// Represents a user entity with authentication details, contact information, and role assignment.
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
@@ -6,19 +9,19 @@ public class User {
     private String username;
     private String password;
     private String role = "USER";
-    private String email;    // Neu hinzugefügt
+    private String email;    // Newly added field
 
-    @JsonAlias("phone") // Accepts both "phone" and "phoneNumber"
-    private String phoneNumber;    // Neu hinzugefügt
+    @JsonAlias("phone") // Allows both "phone" and "phoneNumber" as input keys
+    private String phoneNumber;    // Newly added field
     
-    private String address;  // Neu hinzugefügt
+    private String address;  // Newly added field
     private String companyName;
 
     // Default constructor
     public User() {
     }
 
-    // Parameterized constructor
+    // Constructor to initialize user attributes
     public User(String username, String password, String role, String email, String phoneNumber, String address, String companyName) {
         this.username = username;
         this.password = password;
@@ -29,7 +32,7 @@ public class User {
         this.companyName = companyName;
     }
 
-    // Getters and Setters
+    // Getters and setters for accessing and modifying user properties
     public String getUsername() {
         return username;
     }
@@ -54,39 +57,39 @@ public class User {
         this.role = role;
     }
 
-    public String getEmail() {  // Getter für email
+    public String getEmail() {  
         return email;
     }
 
-    public void setEmail(String email) {  // Setter für email
+    public void setEmail(String email) {  
         this.email = email;
     }
 
-    public String getPhoneNumber() {  // Getter für phone
+    public String getPhoneNumber() {  
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {  // Setter für phone
+    public void setPhoneNumber(String phoneNumber) {  
         this.phoneNumber = phoneNumber;
     }
 
-    public String getAddress() {  // Getter für address
+    public String getAddress() {  
         return address;
     }
 
-    public void setAddress(String address) {  // Setter für address
+    public void setAddress(String address) {  
         this.address = address;
     }
 
-    public String getcompanyName() {  // Getter für companyName
+    public String getcompanyName() {  
         return companyName;
     }
 
-    public void setcompanyName(String companyName) {  // Setter für companyName
+    public void setcompanyName(String companyName) {  
         this.companyName = companyName;
     }
 
-    // toString method (optional for debugging)
+    // toString method for logging and debugging
     @Override
     public String toString() {
         return "User{" +
@@ -100,4 +103,3 @@ public class User {
                 '}';
     }
 }
-

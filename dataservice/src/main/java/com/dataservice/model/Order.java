@@ -1,28 +1,30 @@
+
 package com.dataservice.model;
 
+// Model class representing an order, including customer details, product list, and order status.
 
 import java.util.List;
 
 public class Order {
     private String id;
     private String customerUsername;
-    private List<OrderProduct> products; // Use OrderProduct here
+    private List<OrderProduct> products; // List of products in the order
     private float totalAmount;
     private String status;
     private String createdAt;
 
-    // Newly added fields
+    // Additional fields for company and contact details
     private String companyName;
     private String email;
     private String address;
     private String phoneNumber;
     private String notes;
 
-    // Default Constructor
+    // Default constructor for object initialization
     public Order() {
     }
 
-    // Parameterized Constructor
+    // Parameterized constructor for creating order objects with all details
     public Order(String id, String customerUsername, List<OrderProduct> products, float totalAmount,
                  String status, String createdAt, String companyName, String email,
                  String address, String phoneNumber, String notes) {
@@ -39,7 +41,7 @@ public class Order {
         this.notes = notes;
     }
 
-    // Getters and Setters
+    // Getters and setters for accessing and modifying order properties
     public String getId() {
         return id;
     }
@@ -128,7 +130,7 @@ public class Order {
         this.notes = notes;
     }
 
-    // toString method (optional for debugging)
+    // toString method for debugging and logging purposes
     @Override
     public String toString() {
         return "Order{" +
