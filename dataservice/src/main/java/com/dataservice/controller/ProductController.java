@@ -39,21 +39,30 @@ public class ProductController {
         return products;
     }
 
+    @PostMapping("/add")
+    public void addProduct(@RequestBody Product newProduct) throws IOException {
+        List<Product> products = jsonFileUtil.readJsonFile(FILE_PATH, new TypeReference<List<Product>>() {});
+        products.add(newProduct); // Add only the new product
+        jsonFileUtil.writeJsonFile(FILE_PATH, products); // Save the updated list
+    }
+
+
     // Deletes a product by its ID and returns the updated product list.
-    @DeleteMapping("/{id}")
-    public List<Product> deleteProduct(@PathVariable String id) throws IOException {
+    @DeleteMapping("/{productId}")
+    public List<Product> deleteProduct(@PathVariable String productId) throws IOException {
         List<Product> products = new ArrayList<>(jsonFileUtil.readJsonFile(FILE_PATH, new TypeReference<List<Product>>() {}));
     
-        boolean removed = products.removeIf(product -> product.getproductId().equals(id));
+        boolean removed = products.removeIf(product -> product.getproductId().equals(productId));
     
         if (!removed) {
-            throw new RuntimeException("Product with ID " + id + " not found.");
+            throw new RuntimeException("Product with ID " + productId + " not found.");
         }
     
         jsonFileUtil.writeJsonFile(FILE_PATH, products);
     
         return products;
     }
+
 
     // Retrieves a specific product by its ID from the JSON file.
     @GetMapping("/{productId}")
@@ -80,4 +89,21 @@ public class ProductController {
     
         throw new RuntimeException("Product with ID " + productId + " not found.");
     }
+
+    // Updates only the available quantity of a product by ID
+    @PutMapping("/{productId}/quantity/{newQuantity}")
+    public Product updateProductQuantity(@PathVariable String productId, @PathVariable int newQuantity) throws IOException {
+        List<Product> products = jsonFileUtil.readJsonFile(FILE_PATH, new TypeReference<List<Product>>() {});
+    
+        for (Product product : products) {
+            if (product.getproductId().equals(productId)) {
+                product.setAvailableQuantity(newQuantity); // Update quantity
+                jsonFileUtil.writeJsonFile(FILE_PATH, products);
+                return product; // Return updated product
+            }
+        }
+    
+        throw new RuntimeException("Product with ID " + productId + " not found.");
+    }
+
 }

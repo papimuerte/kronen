@@ -1,75 +1,32 @@
 package com.graphql.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.*;
+import com.graphql.model.Product;
+
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.util.Map;
+import java.io.IOException;
+import java.util.List;
 
 @Component
 public class ProductServiceUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(ProductServiceUtil.class);
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String PRODUCT_SERVICE_URL = "http://localhost:8085/api/products"; // Product Service Base URL
+    private static final String PRODUCT_SERVICE_URL = "http://localhost:8090/products-data";
 
-    // Check if stock is available
-    public boolean isStockAvailable(String productId, int requestedQty) {
-        String url = PRODUCT_SERVICE_URL + "/" + productId;
-        logger.info("Checking stock for product: {}", productId);
-
-        try {
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            logger.info("Product Service Response: {}", response.getBody()); // Log entire response
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonResponse = objectMapper.readTree(response.getBody());
-
-            if (!jsonResponse.has("availableQuantity")) {
-                logger.warn("Product {} response does not contain quantity: {}", productId, response.getBody());
-                return false;
-            }
-
-            int availableQty = jsonResponse.get("availableQuantity").asInt();
-            logger.info("Product {} has {} in stock. Requested: {}", productId, availableQty, requestedQty);
-            return availableQty >= requestedQty;
-        } catch (Exception e) {
-            logger.error("Error checking stock for {}: {}", productId, e.getMessage());
-            return false;
-        }
+    // ✅ Get all products (including availableQuantity)
+    public List<Product> loadProducts() throws IOException {
+        return List.of(restTemplate.getForObject(PRODUCT_SERVICE_URL, Product[].class));
     }
 
-    // Deduct stock from product inventory
-    public boolean deductStock(String productId, int qtyToReduce) {
-        String url = PRODUCT_SERVICE_URL + "/admin/" + productId;
-        logger.info("Reducing stock for product {} by {}", productId, qtyToReduce);
-
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            Map<String, Object> requestBody = Map.of("availableQuantity", -qtyToReduce); // Reduce qty
-            HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                logger.info("Stock updated successfully for product: {}", productId);
-                return true;
-            } else {
-                logger.error("Failed to update stock for {}. Response: {}", productId, response);
-                return false;
-            }
-        } catch (Exception e) {
-            logger.error("Error updating stock for {}: {}", productId, e.getMessage());
-            return false;
-        }
+    public Product updateProductQuantity(String productId, int newQuantity) throws IOException {
+        String url = PRODUCT_SERVICE_URL + "/" + productId + "/quantity/" + newQuantity;
+        
+        return restTemplate.exchange(url, HttpMethod.PUT, null, Product.class).getBody();
     }
+
+
+    public Product getProductById(String productId) throws IOException {
+        return restTemplate.getForObject(PRODUCT_SERVICE_URL + "/" + productId, Product.class);
+    }
+    
 }
-
-

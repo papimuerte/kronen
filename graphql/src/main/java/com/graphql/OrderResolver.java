@@ -3,6 +3,7 @@ package com.graphql;
 import com.graphql.model.Order;
 import com.graphql.model.OrderInput;
 import com.graphql.model.OrderProduct;
+import com.graphql.model.Product;
 import com.graphql.util.OrderDataUtil;
 import com.graphql.util.ProductServiceUtil;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 public class OrderResolver {
 
     private final OrderDataUtil orderDataUtil;
-    private final ProductServiceUtil productServiceUtil; // Util to interact with product service
+    private final ProductServiceUtil productServiceUtil;
 
     public OrderResolver(OrderDataUtil orderDataUtil, ProductServiceUtil productServiceUtil) {
         this.orderDataUtil = orderDataUtil;
@@ -34,6 +35,7 @@ public class OrderResolver {
                 .toList();
     }
 
+    // Query to retrieve all orders
     @QueryMapping
     public List<Order> allOrders() throws IOException {
         return orderDataUtil.loadOrders();
@@ -48,7 +50,7 @@ public class OrderResolver {
                 .orElse(null);
     }
 
-    // Mutation to create a new order
+    // ✅ Existing Mutation: Create a new order
     @MutationMapping
     public Order createOrder(@Argument OrderInput input) throws IOException {
         List<OrderProduct> products = input.getProducts().stream()
@@ -59,8 +61,29 @@ public class OrderResolver {
                         productInput.getUnitPrice()
                 ))
                 .collect(Collectors.toList());
-
-        // Create a new order after stock is confirmed
+    
+        // Check stock availability
+        for (OrderProduct product : products) {
+            Product existingProduct = productServiceUtil.getProductById(product.getProductId());
+    
+            if (existingProduct == null) {
+                throw new RuntimeException("Product not found: " + product.getProductId());
+            }
+    
+            if (existingProduct.getAvailableQuantity() < product.getQuantity()) {
+                throw new RuntimeException("Not enough stock for product: " + product.getProductId());
+            }
+        }
+    
+        // Deduct stock
+        for (OrderProduct product : products) {
+            productServiceUtil.updateProductQuantity(
+                    product.getProductId(),
+                    productServiceUtil.getProductById(product.getProductId()).getAvailableQuantity() - product.getQuantity()
+            );
+        }
+    
+        // Create the order
         Order newOrder = new Order(
                 UUID.randomUUID().toString(),
                 input.getCustomerUsername(),
@@ -74,18 +97,15 @@ public class OrderResolver {
                 input.getPhoneNumber(),
                 input.getNotes()
         );
-
-        // Save the new order
+    
         orderDataUtil.saveOrder(newOrder);
-
         return newOrder;
     }
 
-    // Helper method to calculate total amount
+    // Helper: Calculate total amount
     private float calculateTotalAmount(List<OrderProduct> products) {
         return (float) products.stream()
                 .mapToDouble(product -> product.getQuantity() * (product.getUnitPrice() != null ? product.getUnitPrice() : 0))
                 .sum();
     }
 }
-
