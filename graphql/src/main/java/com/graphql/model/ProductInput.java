@@ -1,10 +1,10 @@
 package com.graphql.model;
 
 public class ProductInput {
-    private String productId;
-    private int quantity;
-    private double unitPrice;
-    private String name;
+    private String productId; // Unique identifier for the product
+    private int quantity; // Quantity of the product ordered
+    private double unitPrice; // Price per unit of the product
+    private String name; // Name of the product
 
     // Getters
     public String getProductId() {
@@ -40,3 +40,4 @@ public class ProductInput {
         this.quantity = quantity;
     }
 }
+

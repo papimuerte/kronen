@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 public class OrderResolver {
 
     private final OrderDataUtil orderDataUtil;
-    private final ProductServiceUtil productServiceUtil; // ✅ Util to interact with product service
+    private final ProductServiceUtil productServiceUtil; // Util to interact with product service
 
     public OrderResolver(OrderDataUtil orderDataUtil, ProductServiceUtil productServiceUtil) {
         this.orderDataUtil = orderDataUtil;
         this.productServiceUtil = productServiceUtil;
     }
 
-    // ✅ Query to retrieve orders by customerUsername
+    // Query to retrieve orders by customerUsername
     @QueryMapping
     public List<Order> ordersByCustomer(@Argument String customerUsername) throws IOException {
         return orderDataUtil.loadOrders().stream()
@@ -39,7 +39,7 @@ public class OrderResolver {
         return orderDataUtil.loadOrders();
     }
 
-    // ✅ Query to fetch a single order by ID
+    // Query to fetch a single order by ID
     @QueryMapping
     public Order order(@Argument String id) throws IOException {
         return orderDataUtil.loadOrders().stream()
@@ -48,7 +48,7 @@ public class OrderResolver {
                 .orElse(null);
     }
 
-    // ✅ Mutation to create a new order
+    // Mutation to create a new order
     @MutationMapping
     public Order createOrder(@Argument OrderInput input) throws IOException {
         List<OrderProduct> products = input.getProducts().stream()
@@ -60,8 +60,7 @@ public class OrderResolver {
                 ))
                 .collect(Collectors.toList());
 
-
-        // ✅ Create a new order after stock is confirmed
+        // Create a new order after stock is confirmed
         Order newOrder = new Order(
                 UUID.randomUUID().toString(),
                 input.getCustomerUsername(),
@@ -76,16 +75,17 @@ public class OrderResolver {
                 input.getNotes()
         );
 
-        // ✅ Save the new order
+        // Save the new order
         orderDataUtil.saveOrder(newOrder);
 
         return newOrder;
     }
 
-    // ✅ Helper method to calculate total amount
+    // Helper method to calculate total amount
     private float calculateTotalAmount(List<OrderProduct> products) {
         return (float) products.stream()
                 .mapToDouble(product -> product.getQuantity() * (product.getUnitPrice() != null ? product.getUnitPrice() : 0))
                 .sum();
     }
 }
+

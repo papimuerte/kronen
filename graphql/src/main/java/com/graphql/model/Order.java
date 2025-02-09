@@ -1,28 +1,27 @@
 package com.graphql.model;
 
-
 import java.util.List;
 
 public class Order {
-    private String id;
-    private String customerUsername;
-    private List<OrderProduct> products; // Use OrderProduct here
-    private float totalAmount;
-    private String status;
-    private String createdAt;
+    private String id; // Unique order ID
+    private String customerUsername; // Username of the customer
+    private List<OrderProduct> products; // List of ordered products
+    private float totalAmount; // Total cost of the order
+    private String status; // Order status (e.g., "pending", "shipped")
+    private String createdAt; // Order creation date
 
-    // Newly added fields
-    private String companyName;
-    private String email;
-    private String address;
-    private String phoneNumber;
-    private String notes;
+    // Additional fields
+    private String companyName; // Customer's company name (if applicable)
+    private String email; // Customer's email address
+    private String address; // Delivery address of the order
+    private String phoneNumber; // Customer's phone number
+    private String notes; // Additional notes about the order
 
-    // Default Constructor
+    // Default constructor
     public Order() {
     }
 
-    // Parameterized Constructor
+    // Parameterized constructor
     public Order(String id, String customerUsername, List<OrderProduct> products, float totalAmount,
                  String status, String createdAt, String companyName, String email,
                  String address, String phoneNumber, String notes) {
@@ -39,7 +38,7 @@ public class Order {
         this.notes = notes;
     }
 
-    // Getters and Setters
+    // Getter and setter methods
     public String getId() {
         return id;
     }
@@ -128,7 +127,7 @@ public class Order {
         this.notes = notes;
     }
 
-    // toString method (optional for debugging)
+    // toString method for debugging purposes
     @Override
     public String toString() {
         return "Order{" +
@@ -146,3 +145,4 @@ public class Order {
                 '}';
     }
 }
+

@@ -16,36 +16,35 @@ public class ProductServiceUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceUtil.class);
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String PRODUCT_SERVICE_URL = "http://localhost:8085/api/products"; // ✅ Product Service Base URL
+    private static final String PRODUCT_SERVICE_URL = "http://localhost:8085/api/products"; // Product Service Base URL
 
-    // ✅ Check if stock is available
+    // Check if stock is available
     public boolean isStockAvailable(String productId, int requestedQty) {
-    String url = PRODUCT_SERVICE_URL + "/" + productId;
-    logger.info("Checking stock for product: {}", productId);
+        String url = PRODUCT_SERVICE_URL + "/" + productId;
+        logger.info("Checking stock for product: {}", productId);
 
-    try {
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        logger.info("Product Service Response: {}", response.getBody());  // Log entire response
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            logger.info("Product Service Response: {}", response.getBody()); // Log entire response
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonResponse = objectMapper.readTree(response.getBody());
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonResponse = objectMapper.readTree(response.getBody());
 
-        if (!jsonResponse.has("availableQuantity")) {
-            logger.warn("Product {} response does not contain quantity: {}", productId, response.getBody());
+            if (!jsonResponse.has("availableQuantity")) {
+                logger.warn("Product {} response does not contain quantity: {}", productId, response.getBody());
+                return false;
+            }
+
+            int availableQty = jsonResponse.get("availableQuantity").asInt();
+            logger.info("Product {} has {} in stock. Requested: {}", productId, availableQty, requestedQty);
+            return availableQty >= requestedQty;
+        } catch (Exception e) {
+            logger.error("Error checking stock for {}: {}", productId, e.getMessage());
             return false;
         }
-
-        int availableQty = jsonResponse.get("availableQuantity").asInt();
-        logger.info("Product {} has {} in stock. Requested: {}", productId, availableQty, requestedQty);
-        return availableQty >= requestedQty;
-    } catch (Exception e) {
-        logger.error("Error checking stock for {}: {}", productId, e.getMessage());
-        return false;
     }
-}
 
-
-    // ✅ Deduct stock from product inventory
+    // Deduct stock from product inventory
     public boolean deductStock(String productId, int qtyToReduce) {
         String url = PRODUCT_SERVICE_URL + "/admin/" + productId;
         logger.info("Reducing stock for product {} by {}", productId, qtyToReduce);
@@ -72,4 +71,5 @@ public class ProductServiceUtil {
         }
     }
 }
+
 

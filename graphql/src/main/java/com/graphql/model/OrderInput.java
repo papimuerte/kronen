@@ -3,15 +3,15 @@ package com.graphql.model;
 import java.util.List;
 
 public class OrderInput {
-    private String customerUsername;
-    private String companyName;
-    private String email;
-    private String address;
-    private String phoneNumber;
-    private String notes;
-    private List<ProductInput> products;
+    private String customerUsername; // Username of the customer
+    private String companyName; // Customer's company name (if applicable)
+    private String email; // Customer's email address
+    private String address; // Delivery address of the order
+    private String phoneNumber; // Customer's phone number
+    private String notes; // Additional notes about the order
+    private List<ProductInput> products; // List of products in the order
 
-    // Getters and Setters
+    // Getter and setter methods
     public String getCustomerUsername() {
         return customerUsername;
     }

@@ -20,7 +20,7 @@ public class OrderDataUtil {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private static final String DATA_SERVICE_URL = "http://localhost:8090/orders-data";
 
-    // ✅ Load all orders from the data service
+    // Load all orders from the data service
     public List<Order> loadOrders() throws IOException {
         logger.info("Fetching all orders from {}", DATA_SERVICE_URL);
         ResponseEntity<Order[]> response = restTemplate.getForEntity(DATA_SERVICE_URL, Order[].class);
@@ -34,7 +34,7 @@ public class OrderDataUtil {
         return List.of(response.getBody());
     }
 
-    // ✅ Load a specific order by ID
+    // Load a specific order by ID
     public Order loadOrder(String id) throws IOException {
         String url = DATA_SERVICE_URL + "/" + id;
         logger.info("Fetching order with ID: {}", id);
@@ -49,7 +49,7 @@ public class OrderDataUtil {
         return response.getBody();
     }
 
-    // ✅ Save a single order
+    // Save a single order
     public void saveOrder(Order order) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -67,7 +67,7 @@ public class OrderDataUtil {
         }
     }
 
-    // ✅ Save multiple orders (Fixed: Sends one by one)
+    // Save multiple orders (Fixed: Sends one by one)
     public void saveOrders(List<Order> orders) throws IOException {
         logger.info("Saving {} orders individually", orders.size());
 
@@ -78,3 +78,4 @@ public class OrderDataUtil {
         logger.info("All orders saved successfully");
     }
 }
+
