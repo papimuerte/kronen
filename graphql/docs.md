@@ -1,68 +1,94 @@
-# TaskWebService - Dokumentation
+# GraphQL Task & Order Management Service - Dokumentation
 
 ## Übersicht
-Das **Task-Management-Backend** dient der Verwaltung von Aufgaben. Es bietet verschiedene Funktionen, um einen genauen Überblick über geplante Aufgaben zu behalten.
+Das **Task- und Bestellmanagement-Backend** basiert auf **GraphQL** und bietet eine Schnittstelle zur Verwaltung von Aufgaben und Bestellungen.
 
 ## Web-API-Technologie
-Die API basiert auf **GraphQL** und bietet eine flexible Schnittstelle für die Interaktion mit den Aufgaben. Der einzige Endpoint ist:
+Die API nutzt **GraphQL** und stellt den folgenden Endpoint zur Verfügung:
 
 ```
 /graphql
 ```
 
 ## Hauptfunktionen
-- Aufgaben erstellen
-- Aufgaben bearbeiten
-- Aufgaben löschen
-- Aufgaben anhand ihrer ID abrufen
-- Aufgaben aktualisieren
-- Bestellungen erstellen und verwalten
+- **Aufgabenverwaltung**
+  - Aufgaben erstellen
+  - Aufgaben bearbeiten
+  - Aufgaben löschen
+  - Aufgaben anhand ihrer ID abrufen
+  - Aufgaben mit Fälligkeitsdatum abrufen
+
+- **Bestellmanagement**
+  - Bestellungen erstellen
+  - Bestellungen abrufen
+  - Bestellungen nach Kunden filtern
 
 ## Klassenbeschreibung
 
 ### **Order**
-Repräsentiert eine Bestellung mit relevanten Attributen wie ID, Kundenname, Liste der bestellten Produkte, Gesamtbetrag, Status und weiteren Informationen wie Lieferadresse und Kontaktangaben.
+Repräsentiert eine Bestellung mit folgenden Attributen:
+- `id`: Eindeutige ID
+- `customerUsername`: Benutzername des Kunden
+- `products`: Liste der bestellten Produkte
+- `totalAmount`: Gesamtkosten der Bestellung
+- `status`: Status der Bestellung (z.B. "pending")
+- `createdAt`: Erstellungsdatum
+- `companyName`: Firmenname des Kunden
+- `email`: E-Mail-Adresse des Kunden
+- `address`: Lieferadresse
+- `phoneNumber`: Telefonnummer des Kunden
+- `notes`: Zusätzliche Notizen
 
 ### **OrderInput**
-Dient als Eingabemodell für Bestellungen, enthält Felder wie Kundenname, Firmenname, E-Mail, Lieferadresse, Telefonnummer und die Liste der bestellten Produkte.
+Eingabemodell für Bestellungen mit den gleichen Feldern wie `Order`, jedoch ohne `id` und `createdAt`.
 
 ### **OrderProduct**
-Repräsentiert ein Produkt innerhalb einer Bestellung, mit Attributen wie Produkt-ID, Name, Menge und Einzelpreis.
+Repräsentiert ein Produkt innerhalb einer Bestellung:
+- `productId`: Produkt-ID
+- `name`: Name des Produkts
+- `quantity`: Bestellmenge
+- `unitPrice`: Einzelpreis
 
-### **Product**
-Speichert Informationen zu einem Produkt im Inventar, wie Produkt-ID, Name, Beschreibung, Kategorie, Material, Einzelpreis, Währung, verfügbare Menge, Mindestbestellmenge, Lieferant und Gewicht.
+### **Task**
+Repräsentiert eine Aufgabe mit folgenden Attributen:
+- `id`: Eindeutige ID
+- `title`: Titel der Aufgabe
+- `description`: Beschreibung der Aufgabe
+- `assignee`: Verantwortliche Person
+- `status`: Status der Aufgabe
+- `dueDate`: Fälligkeitsdatum
+
+### **TaskInput**
+Eingabemodell für Aufgaben mit den gleichen Feldern wie `Task`, jedoch ohne `id`.
 
 ### **OrderDataUtil**
-Hilft beim Laden und Speichern von Bestellungen. Verwendet eine externe Datenquelle zum Abrufen und Speichern von Bestellungen.
+Hilft beim Laden und Speichern von Bestellungen über eine externe Datenquelle.
 
-### **ProductServiceUtil**
-Prüft die Verfügbarkeit von Produkten und verwaltet Lagerbestände. 
+### **TaskDataUtil**
+Hilft beim Laden, Speichern und Verwalten von Aufgaben.
 
-### **OrderResolver**
-GraphQL-Controller für die Verwaltung von Bestellungen, inklusive Mutationen und Queries.
-
-### **GraphQLApplication**
-Startpunkt der Spring Boot-Anwendung.
+### **GraphQLResolver**
+GraphQL-Controller zur Verwaltung von Aufgaben und Bestellungen, inklusive Mutationen und Queries.
 
 ## GraphQL-Queries
 
-| Query-Name      | Beschreibung                              | Parameter | Rückgabewert |
-|-----------------|------------------------------------------|-----------|---------------|
-| `ToDoList`     | Gibt eine Liste aller Aufgaben zurück     | -         | `[Task]`      |
-| `TaskById`     | Gibt eine Aufgabe anhand ihrer ID zurück | `id: ID!` | `Task`        |
-| `TaskDueToday` | Gibt heute fällige Aufgaben zurück       | -         | `[Task]`      |
+| Query-Name         | Beschreibung | Parameter | Rückgabewert |
+|--------------------|-------------|-----------|--------------|
 | `ordersByCustomer` | Gibt Bestellungen eines Kunden zurück | `customerUsername: String!` | `[Order]` |
-| `allOrders`    | Gibt alle Bestellungen zurück | - | `[Order]` |
-| `order`        | Gibt eine Bestellung anhand ihrer ID zurück | `id: String!` | `Order` |
+| `allOrders`       | Gibt alle Bestellungen zurück | - | `[Order]` |
+| `order`           | Gibt eine Bestellung anhand ihrer ID zurück | `id: String!` | `Order` |
+| `toDoList`        | Gibt eine Liste aller Aufgaben zurück | - | `[Task]` |
+| `taskById`        | Gibt eine Aufgabe anhand ihrer ID zurück | `id: String!` | `Task` |
+| `taskDueToday`    | Gibt heute fällige Aufgaben zurück | - | `[Task]` |
 
 ## GraphQL-Mutationen
 
-| Mutation-Name   | Beschreibung                            | Parameter | Rückgabewert |
-|----------------|----------------------------------------|-----------|---------------|
-| `addTask`     | Erstellt eine neue Aufgabe              | `title, description, assignee, status, dueDate` | `Task` |
-| `updateTask`  | Aktualisiert eine vorhandene Aufgabe   | `id, title, description, assignee, status, dueDate` | `Task` |
-| `deleteTask`  | Löscht eine Aufgabe                     | `id: ID!` | `Task` |
-| `createOrder` | Erstellt eine neue Bestellung          | `input: OrderInput!` | `Order` |
+| Mutation-Name  | Beschreibung | Parameter | Rückgabewert |
+|---------------|-------------|-----------|--------------|
+| `createOrder` | Erstellt eine neue Bestellung | `input: OrderInput!` | `Order` |
+| `addTask`     | Erstellt eine neue Aufgabe | `input: TaskInput!` | `Task` |
+| `updateTask`  | Aktualisiert eine vorhandene Aufgabe | `id: String!, input: TaskInput!` | `Task` |
+| `deleteTask`  | Löscht eine Aufgabe | `id: String!` | `Boolean` |
 
 ## User Stories
 
@@ -83,4 +109,3 @@ Startpunkt der Spring Boot-Anwendung.
 
 ### **6. Bestellungen nach Kunden anzeigen**
 - Als **Benutzer** möchte ich **alle meine Bestellungen abrufen**, um **meine Transaktionen nachzuverfolgen**.
-
