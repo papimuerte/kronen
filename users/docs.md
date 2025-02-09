@@ -1,70 +1,70 @@
-# Benutzerverwaltung API-Dokumentation
+# Benutzerverwaltungsservice API-Dokumentation
 
-## Überblick
+## Übersicht
 
-Dieses Dokument beschreibt die REST API für die Verwaltung von Benutzerdaten. Die API bietet Endpunkte zur Erstellung, Aktualisierung, Löschung und Abfrage von Benutzern.
+Das **Benutzerverwaltungs-Backend** dient zur Verwaltung von Benutzerkonten. Es stellt verschiedene Endpunkte zur Verfügung, um Benutzer zu erstellen, zu aktualisieren, zu löschen und abzurufen.
+
+## Web-API-Technologie
+
+Es wird REST genutzt, um eine flexible Schnittstelle für die Interaktion mit den Benutzern bereitzustellen. Die API ist unter folgendem Endpoint erreichbar:
+
+<mark>http://localhost:8080/users</mark>
+
+## Hauptfunktionen
+
+- Erstellung neuer Benutzer
+- Aktualisierung bestehender Benutzer
+- Löschen von Benutzern
+- Abrufen eines Benutzers anhand seiner ID
+- Abrufen aller Benutzer
 
 ## Endpunkte
 
-### Benutzer abrufen
-
-**GET /users**
-
+### GET /users
 Abrufen aller registrierten Benutzer.
 
 **Request:**
-
 ```http
 GET http://localhost:8080/users HTTP/1.1
 ```
 
 **Response:**
-
 ```json
 [
   {
-    "username": "john_doe",
+    "id": "john_doe",
     "email": "john.doe@example.com",
     "role": "USER"
   },
   {
-    "username": "jane_doe",
+    "id": "jane_doe",
     "email": "jane.doe@example.com",
     "role": "ADMIN"
   }
 ]
 ```
 
-### Benutzer anhand des Benutzernamens abrufen
-
-**GET /users/{id}**
-
-Abrufen der Details eines bestimmten Benutzers anhand seines Benutzernamens.
+### GET /users/{id}
+Abrufen eines Benutzers anhand seiner ID.
 
 **Request:**
-
 ```http
 GET http://localhost:8080/users/john_doe HTTP/1.1
 ```
 
 **Response:**
-
 ```json
 {
-  "username": "john_doe",
+  "id": "john_doe",
   "email": "john.doe@example.com",
   "role": "USER"
 }
 ```
 
-### Benutzer aktualisieren
-
-**PUT /users/{id}**
-
-Aktualisieren der Details eines Benutzers. Nur nicht-null Felder werden aktualisiert.
+### PUT /users/{id}
+Aktualisieren der Details eines Benutzers.
 
 **Request:**
-
 ```http
 PUT http://localhost:8080/users/john_doe HTTP/1.1
 Content-Type: application/json
@@ -76,27 +76,21 @@ Content-Type: application/json
 ```
 
 **Response:**
-
 ```json
 {
   "message": "User successfully updated."
 }
 ```
 
-### Benutzer löschen
-
-**DELETE /users/{id}**
-
-Löschen eines Benutzers anhand seines Benutzernamens.
+### DELETE /users/{id}
+Löschen eines Benutzers anhand seiner ID.
 
 **Request:**
-
 ```http
 DELETE http://localhost:8080/users/john_doe HTTP/1.1
 ```
 
 **Response:**
-
 ```json
 {
   "message": "User successfully deleted."
@@ -109,7 +103,7 @@ DELETE http://localhost:8080/users/john_doe HTTP/1.1
 
 ```json
 {
-  "username": "john_doe",
+  "id": "john_doe",
   "password": "securepassword",
   "role": "USER",
   "email": "john.doe@example.com",
@@ -121,7 +115,7 @@ DELETE http://localhost:8080/users/john_doe HTTP/1.1
 
 ## Fehlerbehandlung
 
-Bei fehlerhaften Anfragen werden entsprechende Fehlercodes zurückgegeben:
+Fehlerhafte Anfragen werden mit entsprechenden HTTP-Statuscodes beantwortet:
 
 - **400 Bad Request** – Ungültige Eingaben.
 - **404 Not Found** – Benutzer nicht gefunden.
@@ -134,3 +128,15 @@ Bei fehlerhaften Anfragen werden entsprechende Fehlercodes zurückgegeben:
 - **REST API** für die Kommunikation
 - **Jackson** für JSON-Serialisierung und -Deserialisierung
 
+## User Stories
+
+1. ***Benutzerverwaltung:***  
+   - Als **Administrator** möchte ich neue Benutzer **hinzufügen, aktualisieren oder löschen**, um **die Benutzerkonten effektiv verwalten zu können**.
+2. ***Benutzerübersicht:***  
+   - Als **Administrator** möchte ich **alle registrierten Benutzer abrufen**, um **eine Übersicht über alle Benutzer zu erhalten**.
+3. ***Benutzersuche:***  
+   - Als **Administrator** möchte ich **einen Benutzer anhand seiner ID suchen**, um **schnell gezielt Informationen zu einem bestimmten Benutzer zu erhalten**.
+4. ***Benutzeraktualisierung:***  
+   - Als **Administrator** möchte ich **die Informationen eines Benutzers aktualisieren**, um **seine Daten auf dem neuesten Stand zu halten**.
+5. ***Benutzerlöschung:***  
+   - Als **Administrator** möchte ich **einen Benutzer löschen**, wenn **sein Konto nicht mehr benötigt wird**.
