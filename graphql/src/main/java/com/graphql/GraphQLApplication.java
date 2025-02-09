@@ -1,14 +1,12 @@
-package com.dataservice;
-
-// Main class to bootstrap and run the Spring Boot application.
+package com.graphql;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
-public class DataServiceApplication {
+public class GraphQLApplication {
     public static void main(String[] args) {
-        SpringApplication.run(DataServiceApplication.class, args);
+        SpringApplication.run(GraphQLApplication.class, args);
     }
 }
-

@@ -1,30 +1,27 @@
-
-package com.dataservice.model;
-
-// Model class representing an order, including customer details, product list, and order status.
+package com.graphql.model;
 
 import java.util.List;
 
 public class Order {
-    private String id;
-    private String customerUsername;
-    private List<OrderProduct> products; // List of products in the order
-    private float totalAmount;
-    private String status;
-    private String createdAt;
+    private String id; // Unique order ID
+    private String customerUsername; // Username of the customer
+    private List<OrderProduct> products; // List of ordered products
+    private float totalAmount; // Total cost of the order
+    private String status; // Order status (e.g., "pending", "shipped")
+    private String createdAt; // Order creation date
 
-    // Additional fields for company and contact details
-    private String companyName;
-    private String email;
-    private String address;
-    private String phoneNumber;
-    private String notes;
+    // Additional fields
+    private String companyName; // Customer's company name (if applicable)
+    private String email; // Customer's email address
+    private String address; // Delivery address of the order
+    private String phoneNumber; // Customer's phone number
+    private String notes; // Additional notes about the order
 
-    // Default constructor for object initialization
+    // Default constructor
     public Order() {
     }
 
-    // Parameterized constructor for creating order objects with all details
+    // Parameterized constructor
     public Order(String id, String customerUsername, List<OrderProduct> products, float totalAmount,
                  String status, String createdAt, String companyName, String email,
                  String address, String phoneNumber, String notes) {
@@ -41,7 +38,7 @@ public class Order {
         this.notes = notes;
     }
 
-    // Getters and setters for accessing and modifying order properties
+    // Getter and setter methods
     public String getId() {
         return id;
     }
@@ -130,7 +127,7 @@ public class Order {
         this.notes = notes;
     }
 
-    // toString method for debugging and logging purposes
+    // toString method for debugging purposes
     @Override
     public String toString() {
         return "Order{" +
@@ -148,3 +145,4 @@ public class Order {
                 '}';
     }
 }
+

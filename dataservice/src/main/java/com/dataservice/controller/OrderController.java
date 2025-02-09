@@ -1,5 +1,7 @@
 package com.dataservice.controller;
 
+// REST controller for managing order data stored in a JSON file.
+
 import com.dataservice.model.Order;
 import com.dataservice.JsonFileUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,14 +16,19 @@ import java.util.List;
 @RequestMapping("/orders-data")
 public class OrderController {
 
+    // Logger instance for logging operations related to order management.
     private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+
+    // File path where order data is stored in JSON format.
     private static final String FILE_PATH = "data/orders.json";
     private final JsonFileUtil jsonFileUtil;
 
+    // Constructor for initializing JsonFileUtil dependency.
     public OrderController(JsonFileUtil jsonFileUtil) {
         this.jsonFileUtil = jsonFileUtil;
     }
 
+    // Retrieves all orders from the JSON file.
     @GetMapping
     public List<Order> getAllOrders() throws IOException {
         logger.info("Fetching all orders from file: {}", FILE_PATH);
@@ -36,6 +43,7 @@ public class OrderController {
         return orders;
     }
 
+    // Adds a new order to the JSON file and returns the updated order list.
     @PostMapping
     public List<Order> addOrder(@RequestBody Order newOrder) throws IOException {
         logger.info("Received request to add new order: {}", newOrder);
@@ -50,3 +58,4 @@ public class OrderController {
         return orders;
     }
 }
+
