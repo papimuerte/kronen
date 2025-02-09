@@ -1,10 +1,5 @@
 # Webservices-Dokumentation
 
-## Übersicht
-Diese Dokumentation beschreibt die Webservices des **Product Management Systems**, einschließlich ihrer Funktionen, Schnittstellendefinitionen und Anwendungsfälle. 
-
----
-
 ## **1. Sicherheitskonfiguration**
 
 ### **Funktionalität**
