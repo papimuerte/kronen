@@ -32,6 +32,13 @@ const AdminPage = () => {
           >
             Inventory
           </NavLink>
+          <NavLink
+            to="/admin-users"
+            className="nav-link text-white"
+            activeClassName="active"
+          >
+            Users
+          </NavLink>
         </nav>
       </div>
     </div>
