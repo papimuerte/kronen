@@ -54,39 +54,34 @@ public class UserController {
     @Operation(summary = "Update user by ID", description = "Updates the details of a specific user using their username. Only non-null fields will be updated.")
     @PutMapping("/{id}")
     public Mono<ResponseEntity<String>> updateUser(@PathVariable String id, @RequestBody User updatedUser) {
-        Logger logger = LoggerFactory.getLogger(this.getClass());
-        
         return Mono.fromCallable(() -> userDataUtil.loadUser(id)) // Load user by ID
-                   .doOnNext(userOpt -> logger.info("Loaded user: {}", userOpt)) // Log loaded user
                    .flatMap(userOpt -> userOpt.map(user -> {
-                       logger.info("Updating user: {}", user.getUsername());
                        updateNonNullFields(updatedUser, user); // Update only non-null fields
-                       return saveUserMono(user)
-                           .then(Mono.just(ResponseEntity.ok("User successfully updated."))); // Return success response
+    
+                       return Mono.fromCallable(() -> { 
+                           userDataUtil.updateUser(id, user); // ✅ Now properly handles IOException
+                           return ResponseEntity.ok("User successfully updated.");
+                       });
+    
                    }).orElseGet(() -> {
-                       logger.warn("User with id {} not found", id);
                        return Mono.just(ResponseEntity.notFound().build()); // Return 404 if user not found
                    }))
                    .onErrorResume(e -> {
-                       logger.error("Error updating user: ", e);
-                       return Mono.just(ResponseEntity.internalServerError().body("Error updating user.")); // Handle errors
+                       return Mono.just(ResponseEntity.internalServerError().body("Error updating user."));
                    });
     }
-    
+
+
     // Endpoint to delete a user by ID
     @Operation(summary = "Delete user by ID", description = "Deletes a specific user using their username.")
     @DeleteMapping("/{id}")
     public Mono<ResponseEntity<? extends Object>> deleteUser(@PathVariable String id) {
-        return Mono.fromCallable(userDataUtil::loadUsers)
-                   .flatMap(users -> {
-                       boolean removed = users.removeIf(user -> user.getUsername().equals(id)); // Remove user if found
-                       if (removed) {
-                           return saveUsersMono(users).map(saved -> ResponseEntity.ok("User successfully deleted.")); // Save updated list
-                       }
-                       return Mono.just(ResponseEntity.notFound().build()); // Return 404 if user not found
-                   })
-                   .onErrorResume(e -> Mono.just(ResponseEntity.internalServerError().body("Error deleting user."))); // Handle errors
+        return Mono.fromCallable(() -> userDataUtil.deleteUser(id)) // Call delete function directly
+                   .flatMap(deleted -> deleted ? Mono.just(ResponseEntity.ok("User successfully deleted.")) 
+                                               : Mono.just(ResponseEntity.notFound().build()))
+                   .onErrorResume(e -> Mono.just(ResponseEntity.internalServerError().body("Error deleting user.")));
     }
+    
 
     // Helper method to save all users asynchronously
     private Mono<Void> saveUsersMono(List<User> users) {

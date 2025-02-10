@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .pathMatchers("/graphql").permitAll()
                 .pathMatchers("/auth/**").permitAll()
                 .pathMatchers("/api/products/**").permitAll()
-                .pathMatchers("/users").permitAll()
+                .pathMatchers("/users/**").permitAll()
                 .pathMatchers("/v3/**").permitAll()
                 .pathMatchers("/webjars/**").permitAll()
                 .pathMatchers("/**").permitAll()

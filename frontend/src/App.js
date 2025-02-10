@@ -10,6 +10,7 @@ import AdminPage from './pages/Admin';
 import ProductPage from './pages/products.jsx';
 import InventoryPage from './pages/Inventory.jsx';
 import DetailsPage from './pages/DetailsPage';
+import UsersPage from './pages/UsersPage.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap is loaded
 
   // PrivateRoute 
@@ -49,6 +50,8 @@ const App = () => {
       <Route path="/admin-orders" element={<AdminRoute element={<AdminOrdersPage />} token={decodedToken} />} />
       <Route path="/admin-products" element={<AdminRoute element={<ProductPage />} token={decodedToken} />} />
       <Route path="/admin-inventory" element={<AdminRoute element={<InventoryPage />} token={decodedToken} />} />
+      <Route path="/admin-users" element={<AdminRoute element={<UsersPage />} token={decodedToken} />} />
+
 
       {/* 404 Page */}
       <Route path="*" element={<Navigate to="/" />} />

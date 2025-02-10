@@ -66,4 +66,33 @@ public class UserDataUtil {
         HttpEntity<List<User>> request = new HttpEntity<>(users, headers);
         restTemplate.exchange(DATA_SERVICE_URL, HttpMethod.POST, request, Void.class);
     }
+
+    // Update an existing user
+    public User updateUser(String username, User updatedUser) throws IOException {
+        String url = DATA_SERVICE_URL + "/" + username; // Endpoint to update a user
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+
+        HttpEntity<User> request = new HttpEntity<>(updatedUser, headers);
+        ResponseEntity<User> response = restTemplate.exchange(url, HttpMethod.PUT, request, User.class);
+        
+        return response.getBody(); // Return the updated user
+    }
+
+    /**
+     * Deletes a user by sending a DELETE request to the external data service.
+     * @param username The username of the user to delete.
+     * @return True if deletion was successful, false if the user was not found.
+     * @throws IOException If an error occurs during the request.
+     */
+    public boolean deleteUser(String username) throws IOException {
+        String url = DATA_SERVICE_URL + "/" + username; // Endpoint to delete a user
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.DELETE, request, Void.class);
+
+        return response.getStatusCode().is2xxSuccessful(); // Return true if deletion was successful
+    }
+
 }
