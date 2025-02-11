@@ -31,7 +31,7 @@ Zu Beginn haben wir mit einem *Monolithen* gearbeitet, da es die Entwicklung und
 
 Das System folgt einer Microservice-Architektur mit einem zentralen *API Gateway, das Anfragen an die entsprechenden Services weiterleitet. Alle Daten werden über den **Data Service* verwaltet.
 
-text
+```text
                       +---------------------+
                       |      Client        |
                       |  (localhost:3000)  |
@@ -59,7 +59,7 @@ text
                             |  DB    |
                             +--------+
 
-
+```
 ## *3. Funktionsübersicht*
 
 ### *3.1 Admin-Panel Funktionen*
