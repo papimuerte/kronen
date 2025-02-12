@@ -28,22 +28,6 @@ export default function UsersPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Add new user
-  const addUser = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (!response.ok) throw new Error("Failed to add user");
-      fetchUsers();
-      setForm({ username: "", password: "", role: "", email: "", phoneNumber: "", address: "", companyName: "" });
-    } catch (error) {
-      console.error("Error adding user:", error);
-    }
-  };
 
   // Set user data for editing
   const editUser = (user) => {
@@ -85,7 +69,7 @@ export default function UsersPage() {
       <h1 className="text-2xl font-bold mb-4">User Management</h1>
 
       {/* User Form */}
-      <form onSubmit={editingUser ? updateUser : addUser} className="mb-4 flex flex-wrap gap-2">
+      <form onSubmit={updateUser} className="mb-4 flex flex-wrap gap-2">
         <input type="text" name="username" placeholder="Username" value={form.username} onChange={handleChange} className="border p-2 rounded" required />
         <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} className="border p-2 rounded" required />
         <input type="text" name="role" placeholder="Role" value={form.role} onChange={handleChange} className="border p-2 rounded" />
@@ -93,7 +77,7 @@ export default function UsersPage() {
         <input type="text" name="phoneNumber" placeholder="Phone Number" value={form.phoneNumber} onChange={handleChange} className="border p-2 rounded" />
         <input type="text" name="address" placeholder="Address" value={form.address} onChange={handleChange} className="border p-2 rounded" />
         <input type="text" name="companyName" placeholder="Company Name" value={form.companyName} onChange={handleChange} className="border p-2 rounded" />
-        <button type="submit" className="bg-blue-500 px-4 py-2 rounded">{editingUser ? "Update User" : "Add User"}</button>
+        <button type="submit" className="bg-blue-500 px-4 py-2 rounded">Update User</button>
       </form>
 
       {/* Users Table */}

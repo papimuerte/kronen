@@ -48,22 +48,24 @@ const AuthPage = () => {
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'An error occurred');
-      }
 
       const data = await response.json();
 
       if (isLogin) {
         // Store the token in localStorage
         localStorage.setItem('token', data.token);
+          
+          setTimeout(() => {
+            navigate(data.links.redirect);
+          }, 100); // Small delay to ensure token is fully written
+        
 
         // Redirect the user based on the redirect link
         if (data.links?.redirect) {
+          console.log("navigating to:", data.links.redirect)
           navigate(data.links.redirect); // Use the redirect route provided by the backend
         } else {
-          setMessage('Login successful, but no redirect link provided.');
+          setMessage('Etwas ist schiefgelaufen');
         }
       } else {
         setMessage('Registration successful!');

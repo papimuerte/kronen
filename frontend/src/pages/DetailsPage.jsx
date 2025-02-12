@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 const DetailsPage = ({ token }) => {
   const [formData, setFormData] = useState({
@@ -11,11 +10,12 @@ const DetailsPage = ({ token }) => {
     address: '',
   });
 
+
   useEffect(() => {
     const token = localStorage.token;
+    console.log(localStorage);
 
     if (token) {
-      // Decode the token and prefill the form
       const decoded = jwtDecode(token);
       console.log(decoded);
       setFormData({
@@ -26,6 +26,7 @@ const DetailsPage = ({ token }) => {
         companyName: decoded.companyName || '',
       });
     }
+
   }, [token]);
 
   const handleChange = (e) => {
@@ -39,7 +40,17 @@ const DetailsPage = ({ token }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // GraphQL mutation string
+          // Retrieve and parse the cart data from localStorage
+      const cartData = JSON.parse(localStorage.getItem("cart") || "[]");
+    
+      // Extract relevant product details
+      const products = cartData.map(({ productId, name, unitPrice, quantity }) => ({
+        productId,
+        name,
+        unitPrice,
+        quantity,
+      }));
+
     const mutation = `
       mutation CreateOrder($input: OrderInput!) {
         createOrder(input: $input) {
@@ -52,19 +63,16 @@ const DetailsPage = ({ token }) => {
       }
     `;
 
-    // Prepare the input data for the mutation
     const input = {
       customerUsername: formData.name,
-      products: [
-        {
-          productId: "J001", // Replace with actual product ID
-          quantity: 1,                   // Replace with desired quantity
-        }
-      ],
+      email: formData.email || '',
+      address: formData.address || '',
+      phoneNumber: formData.phoneNumber || '',
+      companyName: formData.companyName || '',
+      products, // Include extracted products
     };
 
     try {
-      // Send the GraphQL mutation request
       const response = await fetch("http://localhost:8080/graphql", {
         method: "POST",
         headers: {
@@ -73,12 +81,7 @@ const DetailsPage = ({ token }) => {
         body: JSON.stringify({ query: mutation, variables: { input } }),
       });
 
-      console.log(response)
-
-      if (!response.ok) {
-        throw new Error("Failed to create the order.");
-      }
-
+      if (!response.ok) throw new Error("Failed to create the order.");
       const responseData = await response.json();
 
       if (responseData.errors) {
@@ -87,6 +90,9 @@ const DetailsPage = ({ token }) => {
 
       console.log("Order created successfully:", responseData.data.createOrder);
       alert("Order created successfully!");
+
+      // Clear cart after order
+      localStorage.removeItem("cart");
     } catch (error) {
       console.error("Error creating order:", error.message);
       alert("Failed to create the order. Please try again.");

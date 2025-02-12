@@ -57,7 +57,7 @@ public class AuthController {
         @ApiResponse(responseCode = "500", description = "Internal Server Error")
     })
     @PostMapping("/register")
-    public Mono<ResponseEntity<String>> register(@RequestBody User user) {
+    public Mono<ResponseEntity<Map<String, Object>>> register(@RequestBody User user) {
         return Mono.fromCallable(() -> {
             try {
                 // Log received user data
@@ -66,7 +66,7 @@ public class AuthController {
                 // Validate input (username must not be empty)
                 if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("Error: Username cannot be empty.");
+                            .body(Map.of("error", "Username cannot be empty."));
                 }
 
                 List<User> users = userDataUtil.loadUsers();
@@ -81,17 +81,17 @@ public class AuthController {
                 // Check if username already exists
                 if (users.stream().anyMatch(u -> user.getUsername().equals(u.getUsername()))) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("Username already exists.");
+                            .body(Map.of("error", "Username already exists."));
                 }
 
                 // Save the user
                 userDataUtil.saveUser(user);
-                return ResponseEntity.ok("User successfully registered. Please log in.");
+                return ResponseEntity.ok(Map.of("message", "User successfully registered. Please log in."));
 
             } catch (Exception e) {
                 e.printStackTrace();
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Error registering user: " + e.getMessage());
+                        .body(Map.of("error", "Error registering user: " + e.getMessage()));
             }
         });
     }
