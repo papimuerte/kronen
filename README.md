@@ -10,7 +10,6 @@ Das *SCM System* ist eine umfassende *Bestands- und Bestellverwaltungsplattform,
 - *Flexible Produkt- und Inventarverwaltung*: Einfache Verwaltung von Produkten und Inventar über das Admin-Panel.
 - *Nur registrierte und eingeloggte Benutzer können Bestellungen aufgeben*, sodass eine genaue Übersicht darüber besteht, welcher Benutzer welche Bestellungen tätigt. Dadurch kann überprüft werden, ob es sich um eine echte Person handelt.
 
-
 ### *Lösung für den Benutzer*
 - *Nur registrierte und eingeloggte Benutzer können Bestellungen aufgeben:*
   - Dadurch wird sichergestellt, dass alle Bestellungen einer echten Person zugeordnet werden können.
@@ -20,14 +19,13 @@ Das *SCM System* ist eine umfassende *Bestands- und Bestellverwaltungsplattform,
 - *Einfache Bestellungen mit minimalem Aufwand* – kein manueller Kontakt über Telefon oder E-Mail nötig.
 - *Effiziente Verwaltung von Bestellungen und Warenkorb-Funktionalität*.
 
-Das System wurde entwickelt, um *echte Probleme* von Großhändlern zu lösen. Als Beispiel wurde ein *Juwelier-Großhandel* genutzt, für den wir bereits eine erweiterte und optimierte Lösung entwickelt haben. Diese Lösung konnte sich *über einen längeren Zeitraum erfolgreich bewähren*.
+Das System wurde entwickelt, um *echte Probleme* von Großhändlern zu lösen.
 
 Technologisch basiert das System auf einer *Microservice-Architektur, mit einem **React-Frontend, einem **Spring Boot-Backend, sowie **JWT für die Authentifizierung* und *OpenAPI für die API-Dokumentation*.
 
 ## *2. Systemarchitektur*
 
-Zu Beginn haben wir mit einem *Monolithen* gearbeitet, da es die Entwicklung und das Debugging erleichtert. Eine einzelne Codebasis machte es für unser Team einfacher, Änderungen zu testen, neue Features zu implementieren und das System in einem frühen Stadium stabil zu halten.
-
+Zu Beginn haben wir mit einem *Monolithen* gearbeitet, da es die Entwicklung und das Debugging erleichtert. Eine einzelne Codebasis machte es für unser Team einfacher, Änderungen zu testen, neue Features zu implementieren und das System in einem frühen Stadium stabil zu halten. Danach als wir unseren Ersten Prototyp bereit hatten, haben wir es auf microservices runtergebrochen und feinschliffe weitergeführt.
 
 Das System folgt einer Microservice-Architektur mit einem zentralen *API Gateway, das Anfragen an die entsprechenden Services weiterleitet. Alle Daten werden über den **Data Service* verwaltet.
 
@@ -58,7 +56,6 @@ Das System folgt einer Microservice-Architektur mit einem zentralen *API Gateway
                             +--------+
                             |  DB    |
                             +--------+
-
 ```
 ## *3. Funktionsübersicht*
 
@@ -96,6 +93,26 @@ Das System folgt einer Microservice-Architektur mit einem zentralen *API Gateway
 | *GraphQL API* | Flexible Abfragen über GraphQL | [GraphQL API Docs](https://github.com/WebApps-WiSe-24/webapp-power-rangers/blob/main/graphql/docs.md) |
 | *Data Service* | Zentraler Datenzugriff | [Data Service Docs](https://github.com/WebApps-WiSe-24/webapp-power-rangers/blob/main/dataservice/docs.md) |
 
-## *6. Fazit*
+## *6. Starten eines Microservices*
+
+Bevor ein Service gestartet wird, sollten folgende Schritte beachtet werden:
+
+1. **In das richtige Verzeichnis wechseln:**
+   ```bash
+   cd <service-directory>
+   ```
+
+2. **Den Code kompilieren und bereinigen:**
+   ```bash
+   mvn clean compile
+   ```
+
+3. **Den Service starten:**
+   ```bash
+   mvn spring-boot:run
+   ```
+
+## *7. Fazit*
 
 Das *SCM System* bietet eine vollständige Lösung zur Verwaltung von Großhandelsbestellungen mit *automatischer Bestandsanpassung* und *flexibler Benutzerverwaltung. Durch die Nutzung von **Microservices* und einer *klaren API-Struktur* ist es leicht skalierbar und erweiterbar.
+
