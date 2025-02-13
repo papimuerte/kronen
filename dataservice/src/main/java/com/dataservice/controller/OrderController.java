@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/orders-data")
@@ -57,5 +59,42 @@ public class OrderController {
         logger.info("New order successfully added: {}", newOrder.getId());
         return orders;
     }
+
+    // New Function: Update Order
+    @PutMapping("/{orderId}")
+    public Order updateOrder(@PathVariable String orderId, @RequestBody Order updatedOrder) throws IOException {
+        logger.info("Received request to update order with ID: {}", orderId);
+
+        List<Order> orders = jsonFileUtil.readJsonFile(FILE_PATH, new TypeReference<List<Order>>() {});
+
+        Optional<Order> existingOrderOpt = orders.stream()
+                .filter(order -> order.getId().equalsIgnoreCase(orderId))
+                .findFirst();
+
+        if (existingOrderOpt.isPresent()) {
+            Order existingOrder = existingOrderOpt.get();
+
+            // Update the order details
+            existingOrder.setCustomerUsername(updatedOrder.getCustomerUsername());
+            existingOrder.setProducts(updatedOrder.getProducts());
+            existingOrder.setTotalAmount(updatedOrder.getTotalAmount());
+            existingOrder.setStatus(updatedOrder.getStatus());
+            existingOrder.setCompanyName(updatedOrder.getCompanyName());
+            existingOrder.setEmail(updatedOrder.getEmail());
+            existingOrder.setAddress(updatedOrder.getAddress());
+            existingOrder.setPhoneNumber(updatedOrder.getPhoneNumber());
+            existingOrder.setNotes(updatedOrder.getNotes());
+
+            logger.info("Order updated successfully: {}", existingOrder.getId());
+
+            // Save updated orders back to file
+            jsonFileUtil.writeJsonFile(FILE_PATH, orders);
+            return existingOrder;
+        } else {
+            logger.warn("Order with ID {} not found", orderId);
+            throw new RuntimeException("Order not found: " + orderId);
+        }
+    }
 }
+
 

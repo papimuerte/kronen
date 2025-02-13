@@ -50,7 +50,7 @@ public class OrderResolver {
                 .orElse(null);
     }
 
-    // ✅ Existing Mutation: Create a new order
+    // Existing Mutation: Create a new order
     @MutationMapping
     public Order createOrder(@Argument OrderInput input) throws IOException {
         List<OrderProduct> products = input.getProducts().stream()
@@ -108,4 +108,31 @@ public class OrderResolver {
                 .mapToDouble(product -> product.getQuantity() * (product.getUnitPrice() != null ? product.getUnitPrice() : 0))
                 .sum();
     }
+    
+    @MutationMapping
+    public Order updateOrderStatus(@Argument String orderId, @Argument String newStatus) throws IOException {
+        List<Order> orders = orderDataUtil.loadOrders();
+    
+        // Find the order by ID
+        Order orderToUpdate = orders.stream()
+                .filter(order -> order.getId().equalsIgnoreCase(orderId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+    
+        // Validate that the new status is allowed
+        List<String> validStatuses = List.of("Pending", "Shipped", "Done");
+        if (!validStatuses.contains(newStatus)) {
+            throw new IllegalArgumentException("Invalid status: " + newStatus);
+        }
+    
+        // Update the order status
+        orderToUpdate.setStatus(newStatus);
+    
+        // Update the order instead of saving a new one
+        orderDataUtil.updateOrder(orderId, orderToUpdate);
+    
+        return orderToUpdate;
+    }
+    
 }
+

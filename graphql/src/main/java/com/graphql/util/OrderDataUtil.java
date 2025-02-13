@@ -77,5 +77,25 @@ public class OrderDataUtil {
 
         logger.info("All orders saved successfully");
     }
+
+    // Function to Update Order
+    public void updateOrder(String orderId, Order updatedOrder) throws IOException {
+        String url = DATA_SERVICE_URL + "/" + orderId;
+        logger.info("Updating order with ID: {}", orderId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Order> request = new HttpEntity<>(updatedOrder, headers);
+
+        ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.PUT, request, Void.class);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            logger.info("Order {} updated successfully", orderId);
+        } else {
+            logger.error("Failed to update order {}, Response: {}", orderId, response);
+            throw new IOException("Error updating order");
+        }
+    }
 }
+
 
