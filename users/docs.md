@@ -21,7 +21,7 @@ Es wird REST genutzt, um eine flexible Schnittstelle für die Interaktion mit de
 ## Endpunkte
 
 ### GET /users
-Abrufen aller registrierten Benutzer.
+Abrufen aller Benutzer.
 
 **Request:**
 ```http
@@ -32,14 +32,13 @@ GET http://localhost:8080/users HTTP/1.1
 ```json
 [
   {
-    "id": "john_doe",
-    "email": "john.doe@example.com",
-    "role": "USER"
-  },
-  {
-    "id": "jane_doe",
-    "email": "jane.doe@example.com",
-    "role": "ADMIN"
+    "username": "testuser1",
+    "password": "test123",
+    "role": "ADMIN",
+    "email": "test@example.com",
+    "phoneNumber": "1234567890",
+    "address": "123 Main Street",
+    "companyName": "TechCorp"
   }
 ]
 ```
@@ -49,16 +48,20 @@ Abrufen eines Benutzers anhand seiner ID.
 
 **Request:**
 ```http
-GET http://localhost:8080/users/john_doe HTTP/1.1
+GET http://localhost:8080/users/testuser1 HTTP/1.1
 ```
 
 **Response:**
 ```json
-{
-  "id": "john_doe",
-  "email": "john.doe@example.com",
-  "role": "USER"
-}
+  {
+    "username": "testuser1",
+    "password": "test123",
+    "role": "ADMIN",
+    "email": "test@example.com",
+    "phoneNumber": "1234567890",
+    "address": "123 Main Street",
+    "companyName": "TechCorp"
+  }
 ```
 
 ### PUT /users/{id}
@@ -66,7 +69,7 @@ Aktualisieren der Details eines Benutzers.
 
 **Request:**
 ```http
-PUT http://localhost:8080/users/john_doe HTTP/1.1
+PUT http://localhost:8080/users/testuser1 HTTP/1.1
 Content-Type: application/json
 
 {
@@ -87,7 +90,7 @@ Löschen eines Benutzers anhand seiner ID.
 
 **Request:**
 ```http
-DELETE http://localhost:8080/users/john_doe HTTP/1.1
+DELETE http://localhost:8080/users/testuser1 HTTP/1.1
 ```
 
 **Response:**
@@ -133,9 +136,7 @@ Fehlerhafte Anfragen werden mit entsprechenden HTTP-Statuscodes beantwortet:
 1. ***Benutzerverwaltung:***  
    - Als **Administrator** möchte ich neue Benutzer **hinzufügen, aktualisieren oder löschen**, um **die Benutzerkonten effektiv verwalten zu können**.
 2. ***Benutzerübersicht:***  
-   - Als **Administrator** möchte ich **alle registrierten Benutzer abrufen**, um **eine Übersicht über alle Benutzer zu erhalten**.
-3. ***Benutzersuche:***  
-   - Als **Administrator** möchte ich **einen Benutzer anhand seiner ID suchen**, um **schnell gezielt Informationen zu einem bestimmten Benutzer zu erhalten**.
+   - Als **Administrator** möchte ich **alle Benutzer abrufen**, um **eine Übersicht über alle Benutzer zu erhalten**.
 4. ***Benutzeraktualisierung:***  
    - Als **Administrator** möchte ich **die Informationen eines Benutzers aktualisieren**, um **seine Daten auf dem neuesten Stand zu halten**.
 5. ***Benutzerlöschung:***  
