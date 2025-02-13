@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar'; // Import Navbar component
 
 const ShopPage = () => {
-  const [products, setProducts] = useState([]); // Store products fetched from the API
+  const [products, setProducts] = useState([]); // State to store products fetched from the API
   const [cart, setCart] = useState(() => {
     // Initialize cart state from localStorage or as an empty array
     const savedCart = localStorage.getItem('cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState(''); // State to handle errors
 
   useEffect(() => {
-    // Fetch products from the API
+    // Fetch products from the API on component mount
     const fetchProducts = async () => {
       try {
         const response = await fetch('http://localhost:8080/api/products');
@@ -21,7 +21,7 @@ const ShopPage = () => {
         const data = await response.json();
         setProducts(data);
       } catch (err) {
-        setError(err.message);
+        setError(err.message); // Store error message in state
       }
     };
 
@@ -59,13 +59,13 @@ const ShopPage = () => {
 
       {/* Main content of the Shop page */}
       <div className="container mt-5">
-        <h1 className="text-center mb-4">Shop</h1>
-        {error && <p className="text-danger text-center">{error}</p>}
-        <div className="row">
+        <h1 className="text-center mb-4">Shop</h1> {/* Page title */}
+        {error && <p className="text-danger text-center">{error}</p>} {/* Display error message if any */}
+        <div className="row"> {/* Display products in a grid */}
           {products.length > 0 ? (
             products.map((product) => (
               <div className="col-md-4 mb-4" key={product.productId}>
-                <div className="card h-100 shadow-sm">
+                <div className="card h-100 shadow-sm"> {/* Bootstrap card layout */}
                   <div className="card-body">
                     <h5 className="card-title">{product.name}</h5>
                     <p className="card-text">{product.description}</p>
@@ -86,7 +86,7 @@ const ShopPage = () => {
               </div>
             ))
           ) : (
-            <p className="text-center">Loading products...</p>
+            <p className="text-center">Loading products...</p> // Display while loading products
           )}
         </div>
       </div>
@@ -94,4 +94,4 @@ const ShopPage = () => {
   );
 };
 
-export default ShopPage;
+export default ShopPage; // Export ShopPage component
