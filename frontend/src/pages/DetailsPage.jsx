@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Import JWT decoding library
 
 const DetailsPage = ({ token }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ // State to store user details
     name: '',
     email: '',
     phoneNumber: '',
@@ -10,23 +10,21 @@ const DetailsPage = ({ token }) => {
     address: '',
   });
 
-
   useEffect(() => {
-    const token = localStorage.token;
+    const token = localStorage.token; // Retrieve token from localStorage
     console.log(localStorage);
 
     if (token) {
-      const decoded = jwtDecode(token);
+      const decoded = jwtDecode(token); // Decode JWT token
       console.log(decoded);
       setFormData({
-        name: decoded.sub || '',
+        name: decoded.sub || '', // Extract user details from decoded token
         email: decoded.email || '',
         address: decoded.address || '',
         phoneNumber: decoded.phoneNumber || '',
         companyName: decoded.companyName || '',
       });
     }
-
   }, [token]);
 
   const handleChange = (e) => {
@@ -40,16 +38,16 @@ const DetailsPage = ({ token }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-          // Retrieve and parse the cart data from localStorage
-      const cartData = JSON.parse(localStorage.getItem("cart") || "[]");
+    // Retrieve and parse the cart data from localStorage
+    const cartData = JSON.parse(localStorage.getItem("cart") || "[]");
     
-      // Extract relevant product details
-      const products = cartData.map(({ productId, name, unitPrice, quantity }) => ({
-        productId,
-        name,
-        unitPrice,
-        quantity,
-      }));
+    // Extract relevant product details
+    const products = cartData.map(({ productId, name, unitPrice, quantity }) => ({
+      productId,
+      name,
+      unitPrice,
+      quantity,
+    }));
 
     const mutation = `
       mutation CreateOrder($input: OrderInput!) {
@@ -100,10 +98,10 @@ const DetailsPage = ({ token }) => {
   };
 
   return (
-    <div className="container mt-5">
-      <h1 className="text-center mb-4">Order Details</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
+    <div className="container mt-5"> {/* Main container */}
+      <h1 className="text-center mb-4">Order Details</h1> {/* Page title */}
+      <form onSubmit={handleSubmit}> {/* Form submission handler */}
+        <div className="mb-3"> {/* Name field */}
           <label htmlFor="name" className="form-label">Name</label>
           <input
             type="text"
@@ -115,7 +113,7 @@ const DetailsPage = ({ token }) => {
             required
           />
         </div>
-        <div className="mb-3">
+        <div className="mb-3"> {/* Email field */}
           <label htmlFor="email" className="form-label">Email</label>
           <input
             type="email"
@@ -127,7 +125,7 @@ const DetailsPage = ({ token }) => {
             required
           />
         </div>
-        <div className="mb-3">
+        <div className="mb-3"> {/* Phone number field */}
           <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
           <input
             type="text"
@@ -139,7 +137,7 @@ const DetailsPage = ({ token }) => {
             required
           />
         </div>
-        <div className="mb-3">
+        <div className="mb-3"> {/* Address field */}
           <label htmlFor="address" className="form-label">Address</label>
           <textarea
             id="address"
@@ -150,7 +148,7 @@ const DetailsPage = ({ token }) => {
             required
           ></textarea>
         </div>
-        <div className="mb-3">
+        <div className="mb-3"> {/* Company name field */}
           <label htmlFor="companyName" className="form-label">Company Name</label>
           <textarea
             id="companyName"
@@ -161,10 +159,10 @@ const DetailsPage = ({ token }) => {
             required
           ></textarea>
         </div>
-        <button type="submit" className="btn btn-success">Submit Order</button>
+        <button type="submit" className="btn btn-success">Submit Order</button> {/* Submit button */}
       </form>
     </div>
   );
 };
 
-export default DetailsPage;
+export default DetailsPage; // Export component for usage
