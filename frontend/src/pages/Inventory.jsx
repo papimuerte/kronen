@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
 
 const Inventory = () => {
-  const [inventory, setInventory] = useState([]);
-  const [error, setError] = useState("");
+  const [inventory, setInventory] = useState([]); // State to store inventory data
+  const [error, setError] = useState(""); // State to store error messages
   const [editProductId, setEditProductId] = useState(null); // Track the product being edited
-  const [editedProduct, setEditedProduct] = useState({}); // Track changes
+  const [editedProduct, setEditedProduct] = useState({}); // Track changes for edited product
 
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/products"); // Fetch products
+        const response = await fetch("http://localhost:8080/api/products"); // Fetch products from API
         if (!response.ok) {
           throw new Error("Failed to fetch inventory.");
         }
         const data = await response.json();
-        setInventory(data);
+        setInventory(data); // Set inventory state with fetched data
       } catch (err) {
-        setError(err.message);
+        setError(err.message); // Handle errors
       }
     };
 
     fetchInventory();
-  }, []);
+  }, []); // Fetch inventory data on component mount
 
   const handleEditClick = (product) => {
     setEditProductId(product.productId); // Enable editing for this product
@@ -40,37 +40,37 @@ const Inventory = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(editedProduct),
+        body: JSON.stringify(editedProduct), // Send updated product data
       });
 
       if (!response.ok) {
         throw new Error("Failed to update the product.");
       }
 
-      // Update local state
+      // Update local state with edited product data
       setInventory((prev) =>
         prev.map((product) =>
           product.productId === editProductId ? { ...product, ...editedProduct } : product
         )
       );
 
-      setEditProductId(null);
-      setEditedProduct({});
+      setEditProductId(null); // Reset editing state
+      setEditedProduct({}); // Clear edited product state
     } catch (err) {
-      setError(err.message);
+      setError(err.message); // Handle errors
     }
   };
 
   const handleCancelClick = () => {
-    setEditProductId(null);
-    setEditedProduct({});
+    setEditProductId(null); // Cancel editing mode
+    setEditedProduct({}); // Reset edited product state
   };
 
   return (
     <div>
       <h1>Inventory</h1>
-      {error && <p className="text-danger">{error}</p>}
-      <table className="table table-bordered">
+      {error && <p className="text-danger">{error}</p>} {/* Display error message if any */}
+      <table className="table table-bordered"> {/* Table to display inventory data */}
         <thead>
           <tr>
             <th>Product ID</th>
@@ -142,13 +142,13 @@ const Inventory = () => {
                   <>
                     <button
                       className="btn btn-success btn-sm me-2"
-                      onClick={handleSaveClick}
+                      onClick={handleSaveClick} // Save changes button
                     >
                       Save
                     </button>
                     <button
                       className="btn btn-secondary btn-sm"
-                      onClick={handleCancelClick}
+                      onClick={handleCancelClick} // Cancel editing button
                     >
                       Cancel
                     </button>
@@ -156,7 +156,7 @@ const Inventory = () => {
                 ) : (
                   <button
                     className="btn btn-primary btn-sm"
-                    onClick={() => handleEditClick(item)}
+                    onClick={() => handleEditClick(item)} // Edit button
                   >
                     Edit
                   </button>
@@ -170,4 +170,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default Inventory; // Export Inventory component
