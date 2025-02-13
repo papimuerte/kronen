@@ -1,4 +1,16 @@
-# Webservices-Dokumentation
+# Product Service - Dokumentation
+
+## Einleitung
+Der **Product Service** verwaltet die Produktdaten 
+Er ermöglicht:
+- Das Abrufen und Anzeigen von Produkten
+- Das Erstellen und Aktualisieren von Produkten durch Administratoren
+- Das Löschen von Produkten aus dem Bestand
+- updaten und ändern des Inventars
+
+Die API ist für eine einfache Integration in bestehende Systeme optimiert.
+
+---
 
 ## **1. Sicherheitskonfiguration**
 
@@ -7,21 +19,28 @@ Die `SecurityConfig`-Klasse definiert die Sicherheitsrichtlinien für den Zugrif
 
 ### **Wichtige Endpunkte**
 
-| Endpunkt                     | Zugriff        | Beschreibung                                   |
-|------------------------------|----------------|-----------------------------------------------|
-| `/auth/**`                   | Öffentlich     | Erlaubt Zugriff auf Authentifizierungs-APIs. |
-| `/api/**`                    | Öffentlich     | Erlaubt Zugriff auf allgemeine APIs.         |
-| `/api/products/**`           | Öffentlich     | Zugriff auf Produkte-APIs.                   |
-| `/api/products/admin/**`     | Öffentlich     | Zugriff auf administrative APIs.             |
-| `/**`                        | Öffentlich     | Standardzugriff auf alle Endpunkte.          |
-| Andere Endpunkte             | Authentifiziert| Erfordert Authentifizierung.                 |
+| Endpunkt                     |Beschreibung                                 |
+|------------------------------|---------------------------------------------|
+| `/auth/**`                   |Erlaubt Zugriff auf Authentifizierungs-APIs. |
+| `/api/**`                    |Erlaubt Zugriff auf allgemeine APIs.         |
+| `/api/products/**`           |Zugriff auf Produkte-APIs.                   |
+| `/api/products/admin/**`     |Zugriff auf administrative APIs.             |
 
 ---
 
 ## **2. Produktverwaltung (ProductController)**
 
 ### **Funktionalität**
-Der `ProductController` bietet Endpunkte zur Verwaltung von Produkten, einschließlich Abrufen, Hinzufügen, Aktualisieren und Löschen von Produkten.
+Der `ProductController` bietet Endpunkte zur Verwaltung von Produkten und Inventar, einschließlich Abrufen, Hinzufügen, Aktualisieren und Löschen von Produkten.
+
+### **User Story**
+**Als Kunde**  
+möchte ich eine Liste aller verfügbaren Produkte abrufen,  
+damit ich eine informierte Kaufentscheidung treffen kann.
+
+**Akzeptanzkriterien:**
+- Die API soll eine Liste mit allen Produkten zurückgeben.
+- Falls ein Produkt nicht existiert, soll eine `404`-Fehlermeldung erscheinen.
 
 ### **API-Schnittstellen**
 
@@ -30,21 +49,28 @@ Der `ProductController` bietet Endpunkte zur Verwaltung von Produkten, einschlie
 
 - **Beschreibung:** Ruft alle verfügbaren Produkte ab.
 - **Response:**
-  - **Erfolg (200 OK):**
+  - **200 – Erfolg:**
     ```json
     [
       {
-        "productId": "123",
-        "name": "Laptop",
-        "category": "Electronics",
-        "unitPrice": 999.99
+        "productId":"J001",
+        "name":"Diamond Tennis Bracelet",
+        "description":"Elegant 18k white gold bracelet with 2-carat diamonds.","category":"Bracelets",
+        "material":"18k White Gold, Diamond",
+        "unitPrice":4000.0,
+        "currency":"EUR",
+        "availableQuantity":29,
+        "minimumOrderQuantity":1,
+        "supplier":"GemLux Creations",
+        "leadTimeDays":4,
+        "weightGram":4      
       }
     ]
     ```
-  - **Fehler (500 Internal Server Error):**
+  - **500 – Serverfehler:**
     ```json
     {
-      "error": "Error fetching products."
+      "error": "Fehler beim Abrufen der Produkte."
     }
     ```
 
@@ -53,25 +79,32 @@ Der `ProductController` bietet Endpunkte zur Verwaltung von Produkten, einschlie
 
 - **Beschreibung:** Ruft ein einzelnes Produkt anhand seiner ID ab.
 - **Response:**
-  - **Erfolg (200 OK):**
+  - **200 – Erfolg:**
     ```json
     {
-      "productId": "123",
-      "name": "Laptop",
-      "category": "Electronics",
-      "unitPrice": 999.99
+        "productId":"J001",
+        "name":"Diamond Tennis Bracelet",
+        "description":"Elegant 18k white gold bracelet with 2-carat diamonds.","category":"Bracelets",
+        "material":"18k White Gold, Diamond",
+        "unitPrice":4000.0,
+        "currency":"EUR",
+        "availableQuantity":29,
+        "minimumOrderQuantity":1,
+        "supplier":"GemLux Creations",
+        "leadTimeDays":4,
+        "weightGram":4  
     }
     ```
-  - **Fehler (404 Not Found):**
+  - **404 – Nicht gefunden:**
     ```json
     {
-      "error": "Product not found."
+      "error": "Produkt nicht gefunden."
     }
     ```
-  - **Fehler (500 Internal Server Error):**
+  - **500 – Serverfehler:**
     ```json
     {
-      "error": "Error fetching product."
+      "error": "Fehler beim Abrufen des Produkts."
     }
     ```
 
@@ -82,24 +115,30 @@ Der `ProductController` bietet Endpunkte zur Verwaltung von Produkten, einschlie
 - **Request:**
 ```json
 {
-  "productId": "123",
-  "name": "Laptop",
-  "category": "Electronics",
-  "unitPrice": 999.99,
-  "availableQuantity": 10
+        "productId":"J002",
+        "name":"Diamond Tennis Ring",
+        "description":"Elegant 18k white gold ring with 2-carat diamonds.","category":"Rings",
+        "material":"18k White Gold, Diamond",
+        "unitPrice":4000.0,
+        "currency":"EUR",
+        "availableQuantity":29,
+        "minimumOrderQuantity":1,
+        "supplier":"GemLux Creations",
+        "leadTimeDays":4,
+        "weightGram":4  
 }
 ```
 - **Response:**
-  - **Erfolg (200 OK):**
+  - **200 – Erfolg:**
     ```json
     {
-      "message": "Product added successfully."
+      "message": "Produkt erfolgreich hinzugefügt."
     }
     ```
-  - **Fehler (500 Internal Server Error):**
+  - **500 – Serverfehler:**
     ```json
     {
-      "error": "Error adding product."
+      "error": "Fehler beim Hinzufügen des Produkts."
     }
     ```
 
@@ -110,27 +149,28 @@ Der `ProductController` bietet Endpunkte zur Verwaltung von Produkten, einschlie
 - **Request:**
 ```json
 {
-  "name": "Gaming Laptop",
-  "unitPrice": 1299.99
+    "productId":"J002",
+  "name":"Diamond Tennis Ring",
+  "unitPrice":8000.0
 }
 ```
 - **Response:**
-  - **Erfolg (200 OK):**
+  - **200 – Erfolg:**
     ```json
     {
-      "message": "Product updated successfully."
+      "message": "Produkt erfolgreich aktualisiert."
     }
     ```
-  - **Fehler (404 Not Found):**
+  - **404 – Nicht gefunden:**
     ```json
     {
-      "error": "Product not found."
+      "error": "Produkt nicht gefunden."
     }
     ```
-  - **Fehler (500 Internal Server Error):**
+  - **500 – Serverfehler:**
     ```json
     {
-      "error": "Error updating product."
+      "error": "Fehler beim Aktualisieren des Produkts."
     }
     ```
 
@@ -139,22 +179,21 @@ Der `ProductController` bietet Endpunkte zur Verwaltung von Produkten, einschlie
 
 - **Beschreibung:** Löscht ein Produkt anhand seiner ID.
 - **Response:**
-  - **Erfolg (200 OK):**
+  - **200 – Erfolg:**
     ```json
     {
-      "message": "Product deleted successfully."
+      "message": "Produkt erfolgreich gelöscht."
     }
     ```
-  - **Fehler (404 Not Found):**
+  - **404 – Nicht gefunden:**
     ```json
     {
-      "error": "Product not found."
+      "error": "Produkt nicht gefunden."
     }
     ```
-  - **Fehler (500 Internal Server Error):**
+  - **500 – Serverfehler:**
     ```json
     {
-      "error": "Error deleting product."
+      "error": "Fehler beim Löschen des Produkts."
     }
     ```
-
