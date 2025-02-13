@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 const Orders = () => {
-  const [orders, setOrders] = useState([]);
-  const [error, setError] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [orders, setOrders] = useState([]); // State to store fetched orders
+  const [error, setError] = useState(""); // State for error messages
+  const [selectedOrder, setSelectedOrder] = useState(null); // State to track expanded order details
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -41,24 +41,24 @@ const Orders = () => {
         const responseData = await response.json();
         if (responseData.errors) throw new Error(responseData.errors[0].message);
 
-        setOrders(responseData.data.allOrders);
+        setOrders(responseData.data.allOrders); // Update state with fetched orders
       } catch (err) {
         setError(err.message);
       }
     };
 
     fetchOrders();
-  }, []);
+  }, []); // Fetch orders on component mount
 
   const toggleOrderDetails = (orderId) => {
-    setSelectedOrder(selectedOrder === orderId ? null : orderId);
+    setSelectedOrder(selectedOrder === orderId ? null : orderId); // Toggle expanded order details
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Pending": return "table-danger"; // Red
-      case "Shipped": return "table-warning"; // Orange
-      case "Done": return "table-success"; // Green
+      case "Pending": return "table-danger"; // Red for pending orders
+      case "Shipped": return "table-warning"; // Orange for shipped orders
+      case "Done": return "table-success"; // Green for completed orders
       default: return "";
     }
   };
@@ -74,7 +74,6 @@ const Orders = () => {
         }
       `;
   
-      // Ensure the JSON structure is correct
       const requestBody = JSON.stringify({
         query: mutation,
         variables: {
@@ -88,16 +87,14 @@ const Orders = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: requestBody, // Send the JSON formatted request
+        body: requestBody,
       });
   
       if (!response.ok) throw new Error("Failed to update order status.");
   
       const responseData = await response.json();
-  
       if (responseData.errors) throw new Error(responseData.errors[0].message);
   
-      // Update local state to reflect status change
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order.id === orderId ? { ...order, status: newStatus } : order
@@ -108,13 +105,12 @@ const Orders = () => {
     }
   };
   
-
   return (
-    <div className="container mt-4">
-      <h1>Orders</h1>
-      {error && <p className="text-danger">{error}</p>}
-      <table className="table table-bordered">
-        <thead className="table-dark">
+    <div className="container mt-4"> {/* Main container */}
+      <h1>Orders</h1> {/* Page title */}
+      {error && <p className="text-danger">{error}</p>} {/* Display errors */}
+      <table className="table table-bordered"> {/* Orders table */}
+        <thead className="table-dark"> {/* Table headers */}
           <tr>
             <th>Order ID</th>
             <th>Customer</th>
@@ -160,7 +156,7 @@ const Orders = () => {
                       <p><strong>Address:</strong> {order.address}</p>
                       <p><strong>Notes:</strong> {order.notes || "No additional notes"}</p>
                       <h5>Products</h5>
-                      <table className="table table-sm">
+                      <table className="table table-sm"> {/* Nested table for products */}
                         <thead>
                           <tr>
                             <th>Product ID</th>
@@ -192,4 +188,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default Orders; // Export Orders component
