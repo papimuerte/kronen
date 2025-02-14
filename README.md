@@ -57,6 +57,9 @@ Das System folgt einer Microservice-Architektur mit einem zentralen *API Gateway
                             |  DB    |
                             +--------+
 ```
+
+Zusätzlich haben wir einen **gRPC Service** implementiert, der erfolgreich läuft. Leider haben wir es jedoch nicht geschafft, diesen vollständig in unsere Microservice-Architektur zu integrieren. Der gRPC Service wird daher aktuell als separater Dienst betrieben.
+
 ## *3. Funktionsübersicht*
 
 ### *3.1 Admin-Panel Funktionen*
@@ -112,7 +115,40 @@ Bevor ein Service gestartet wird, sollten folgende Schritte beachtet werden:
    mvn spring-boot:run
    ```
 
-## *7. Fazit*
+## *7. Starten des Frontends & Zugriff auf Swagger UI*
+
+### *7.1 Starten des Frontends (React)*
+Um das Frontend zu starten, folgen Sie diesen Schritten:
+
+1. **In das richtige Verzeichnis wechseln:**
+   ```bash
+   cd frontend
+   ```
+
+2. **Abhängigkeiten installieren (falls noch nicht geschehen):**
+   ```bash
+   npm install
+   ```
+
+3. **Das Frontend starten:**
+   ```bash
+   npm run start
+   ```
+
+Nach dem Start ist das Frontend unter `http://localhost:3000` erreichbar.
+
+---
+
+### *7.2 Zugriff auf Swagger UI (API-Dokumentation)*
+Die API-Dokumentation ist über Swagger UI verfügbar. Öffnen Sie nach dem Start des Backends und des Gateways folgende URL in Ihrem Browser:
+
+```
+http://localhost:8080/webjars/swagger-ui/index.html
+```
+
+Dort können alle verfügbaren API-Endpunkte eingesehen und getestet werden.
+
+## *8. Fazit*
 
 Das *SCM System* bietet eine vollständige Lösung zur Verwaltung von Großhandelsbestellungen mit *automatischer Bestandsanpassung* und *flexibler Benutzerverwaltung. Durch die Nutzung von **Microservices* und einer *klaren API-Struktur* ist es leicht skalierbar und erweiterbar.
 
