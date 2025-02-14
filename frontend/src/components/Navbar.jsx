@@ -1,46 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Importing React and useState for state management
 import { Link } from 'react-router-dom'; // Importing Link component for navigation without page reload
 
 const Navbar = ({ cartCount }) => {
+  // State to manage the toggle of the navbar in mobile view
   const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary"> {/* Bootstrap navbar with dark theme and primary background color */}
-      <div className="container"> {/* Container to keep navbar content aligned properly */}
-        <Link className="navbar-brand" to="/"> {/* Brand logo that links to the homepage */}
-          MyShop
-        </Link>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div className="container">
+        {/* Brand logo that links to the homepage */}
+        <Link className="navbar-brand" to="/">MyShop</Link>
+
+        {/* Button to toggle navigation menu on small screens */}
         <button
-          className="navbar-toggler" // Button to toggle navigation menu in smaller screens
+          className="navbar-toggler"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav" // Links to the collapsible menu div below
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+          onClick={() => setIsOpen(!isOpen)} // Toggle state on click
         >
-          <span className="navbar-toggler-icon"></span> {/* Bootstrap icon for the toggle button */}
+          <span className="navbar-toggler-icon"></span> {/* Bootstrap hamburger icon */}
         </button>
-        <div className="collapse navbar-collapse" id="navbarNav"> {/* Collapsible menu for responsive design */}
+
+        {/* Collapsible navigation menu */}
+        <div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`} id="navbarNav">
           <ul className="navbar-nav ms-auto"> {/* Navigation list aligned to the right */}
-            <li className="nav-item"> {/* Navigation item for Home */}
-              <Link className="nav-link" to="/">
+
+            {/* Navigation item for Home */}
+            <li className="nav-item">
+              <Link className="nav-link" to="/" onClick={() => setIsOpen(false)}>
                 Home
               </Link>
             </li>
-            <li className="nav-item"> {/* Navigation item for Shop */}
-              <Link className="nav-link" to="/shop">
+
+            {/* Navigation item for Shop */}
+            <li className="nav-item">
+              <Link className="nav-link" to="/shop" onClick={() => setIsOpen(false)}>
                 Shop
               </Link>
             </li>
-            <li className="nav-item">  {/* Navigation item for CART */}
+
+            {/* Navigation item for Cart */}
+            <li className="nav-item">
               <Link className="nav-link position-relative" to="/cart" onClick={() => setIsOpen(false)}>
                 Cart
+                {/* Display badge only when there are items in the cart */}
                 {cartCount > 0 && (
                   <span
                     className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                     style={{ fontSize: '0.8rem' }}
                   >
-                    {cartCount}
+                    {cartCount} {/* Display cart item count */}
                   </span>
                 )}
               </Link>
