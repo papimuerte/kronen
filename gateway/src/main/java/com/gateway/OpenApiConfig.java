@@ -1,5 +1,3 @@
-gateway\src\main\java\com\gateway\OpenApiConfig.java
-
 package com.gateway;
 
 import io.swagger.v3.oas.models.OpenAPI;
