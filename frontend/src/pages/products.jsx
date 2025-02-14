@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 
 const Products = () => {
-  const [products, setProducts] = useState([]); // State to store product list
-  const [error, setError] = useState(""); // State to store error messages
-  const [editProductId, setEditProductId] = useState(null); // Track the product being edited
-  const [editedProduct, setEditedProduct] = useState({}); // Track changes for editing
-  const [newProduct, setNewProduct] = useState({ // Track input for new product
+  // State hooks for managing product data and UI state
+  const [products, setProducts] = useState([]); // Stores the list of products
+  const [error, setError] = useState(""); // Stores error messages
+  const [editProductId, setEditProductId] = useState(null); // Tracks the product being edited
+  const [editedProduct, setEditedProduct] = useState({}); // Holds the edited product data
+  const [newProduct, setNewProduct] = useState({ // Holds new product data for input fields
     name: "",
     description: "",
     unitPrice: "",
@@ -13,10 +14,11 @@ const Products = () => {
     weightGram: "",
   });
 
+  // Fetch products from API when the component mounts
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/products"); // Fetch products from API
+        const response = await fetch("http://localhost:8080/api/products");
         if (!response.ok) {
           throw new Error("Failed to fetch products.");
         }
@@ -28,18 +30,21 @@ const Products = () => {
     };
 
     fetchProducts();
-  }, []); // Fetch products on component mount
+  }, []);
 
+  // Handle editing a product
   const handleEditClick = (product) => {
-    setEditProductId(product.productId); // Enable editing mode for selected product
-    setEditedProduct({ ...product }); // Set initial values for editing
+    setEditProductId(product.productId);
+    setEditedProduct({ ...product });
   };
 
+  // Handle input change during editing
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedProduct((prev) => ({ ...prev, [name]: value })); // Update field values
+    setEditedProduct((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Save the edited product details
   const handleSaveClick = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/products/admin/${editProductId}`, {
@@ -54,19 +59,22 @@ const Products = () => {
         throw new Error("Failed to update the product.");
       }
 
+      // Update product list with edited product
       setProducts((prev) =>
         prev.map((product) =>
           product.productId === editProductId ? { ...product, ...editedProduct } : product
         )
       );
 
-      setEditProductId(null); // Reset editing state
-      setEditedProduct({}); // Clear edited product state
+      // Reset editing state
+      setEditProductId(null);
+      setEditedProduct({});
     } catch (err) {
       setError(err.message);
     }
   };
 
+  // Handle deleting a product
   const handleDeleteClick = async (productId) => {
     try {
       const response = await fetch(`http://localhost:8080/api/products/admin/${productId}`, {
@@ -77,31 +85,33 @@ const Products = () => {
         throw new Error("Failed to delete the product.");
       }
 
-      setProducts((prev) => prev.filter((product) => product.productId !== productId)); // Remove product from state
+      // Remove deleted product from state
+      setProducts((prev) => prev.filter((product) => product.productId !== productId));
     } catch (err) {
       setError(err.message);
     }
   };
 
+  // Handle adding a new product
   const handleAddClick = async () => {
     try {
+      const newId = Date.now().toString();
       const response = await fetch("http://localhost:8080/api/products/admin/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...newProduct,
-          productId: Date.now().toString(), // Generate a unique ID for new product
-        }),
+        body: JSON.stringify({ ...newProduct, productId: newId }),
       });
 
       if (!response.ok) {
         throw new Error("Failed to add the product.");
       }
 
-      setProducts((prev) => [...prev, { ...newProduct, productId: Date.now().toString() }]);
-      setNewProduct({ name: "", description: "", unitPrice: "", minimumOrderQuantity: "", weightGram: "" }); // Reset form
+      // Append new product to product list
+      setProducts((prev) => [...prev, { ...newProduct, productId: newId }]);
+      // Reset input fields
+      setNewProduct({ name: "", description: "", unitPrice: "", minimumOrderQuantity: "", weightGram: "" });
     } catch (err) {
       setError(err.message);
     }
@@ -110,9 +120,9 @@ const Products = () => {
   return (
     <div>
       <h1>Products</h1>
-      {error && <p className="text-danger">{error}</p>} {/* Display error message if any */}
+      {error && <p className="text-danger">{error}</p>}
 
-      {/* Form to add a new product */}
+      {/* Form to add new product */}
       <div className="mb-4">
         <h2>Add New Product</h2>
         <div className="row g-2">
@@ -167,12 +177,21 @@ const Products = () => {
           {products.map((product) => (
             <tr key={product.productId}>
               <td>{product.productId}</td>
-              <td>{product.name}</td>
-              <td>{product.description}</td>
-              <td>{product.unitPrice}</td>
+              <td>{editProductId === product.productId ? <input type="text" name="name" className="form-control" value={editedProduct.name} onChange={handleChange} /> : product.name}</td>
+              <td>{editProductId === product.productId ? <input type="text" name="description" className="form-control" value={editedProduct.description} onChange={handleChange} /> : product.description}</td>
+              <td>{editProductId === product.productId ? <input type="number" name="unitPrice" className="form-control" value={editedProduct.unitPrice} onChange={handleChange} /> : product.unitPrice}</td>
               <td>
-                <button className="btn btn-primary btn-sm me-2" onClick={() => handleEditClick(product)}>Edit</button>
-                <button className="btn btn-danger btn-sm" onClick={() => handleDeleteClick(product.productId)}>Delete</button>
+                {editProductId === product.productId ? (
+                  <>
+                    <button className="btn btn-success btn-sm me-2" onClick={handleSaveClick}>Save</button>
+                    <button className="btn btn-secondary btn-sm" onClick={() => setEditProductId(null)}>Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <button className="btn btn-primary btn-sm me-2" onClick={() => handleEditClick(product)}>Edit</button>
+                    <button className="btn btn-danger btn-sm" onClick={() => handleDeleteClick(product.productId)}>Delete</button>
+                  </>
+                )}
               </td>
             </tr>
           ))}
@@ -182,4 +201,4 @@ const Products = () => {
   );
 };
 
-export default Products; // Export Products component
+export default Products;

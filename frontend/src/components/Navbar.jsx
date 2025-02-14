@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Importing Link component for navigation without page reload
 
-const Navbar = () => {
+const Navbar = ({ cartCount }) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-primary"> {/* Bootstrap navbar with dark theme and primary background color */}
       <div className="container"> {/* Container to keep navbar content aligned properly */}
@@ -31,14 +32,17 @@ const Navbar = () => {
                 Shop
               </Link>
             </li>
-            <li className="nav-item"> {/* Navigation item for Login */}
-              <Link className="nav-link" to="/login">
-                Login
-              </Link>
-            </li>
-            <li className="nav-item"> {/* Navigation item for Register */}
-              <Link className="nav-link" to="/register">
-                Register
+            <li className="nav-item">  {/* Navigation item for CART */}
+              <Link className="nav-link position-relative" to="/cart" onClick={() => setIsOpen(false)}>
+                Cart
+                {cartCount > 0 && (
+                  <span
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    style={{ fontSize: '0.8rem' }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             </li>
           </ul>
