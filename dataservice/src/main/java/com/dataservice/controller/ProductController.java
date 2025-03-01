@@ -90,20 +90,5 @@ public class ProductController {
         throw new RuntimeException("Product with ID " + productId + " not found.");
     }
 
-    // Updates only the available quantity of a product by ID
-    @PutMapping("/{productId}/quantity/{newQuantity}")
-    public Product updateProductQuantity(@PathVariable String productId, @PathVariable int newQuantity) throws IOException {
-        List<Product> products = jsonFileUtil.readJsonFile(FILE_PATH, new TypeReference<List<Product>>() {});
-    
-        for (Product product : products) {
-            if (product.getproductId().equals(productId)) {
-                product.setAvailableQuantity(newQuantity); // Update quantity
-                jsonFileUtil.writeJsonFile(FILE_PATH, products);
-                return product; // Return updated product
-            }
-        }
-    
-        throw new RuntimeException("Product with ID " + productId + " not found.");
-    }
 
 }

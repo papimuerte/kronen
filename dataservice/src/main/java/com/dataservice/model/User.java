@@ -15,8 +15,6 @@ public class User {
     private String phoneNumber;    // Newly added field
     
     private String address;  // Newly added field
-    private String companyName;
-
     // Default constructor
     public User() {
     }
@@ -29,7 +27,6 @@ public class User {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.companyName = companyName;
     }
 
     // Getters and setters for accessing and modifying user properties
@@ -81,13 +78,6 @@ public class User {
         this.address = address;
     }
 
-    public String getcompanyName() {  
-        return companyName;
-    }
-
-    public void setcompanyName(String companyName) {  
-        this.companyName = companyName;
-    }
 
     // toString method for logging and debugging
     @Override
@@ -99,7 +89,6 @@ public class User {
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", address='" + address + '\'' +
-                ", companyName='" + companyName + '\'' +
                 '}';
     }
 }

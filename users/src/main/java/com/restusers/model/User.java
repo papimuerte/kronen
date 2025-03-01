@@ -12,7 +12,6 @@ public class User {
     private String phoneNumber;    // Newly added field for storing user's phone number
     
     private String address;  // Newly added field for storing user's address
-    private String companyName;  // Field for storing user's company name
 
     // Default constructor (required for object mapping and serialization)
     public User() {
@@ -26,7 +25,6 @@ public class User {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.companyName = companyName;
     }
 
     // Getters and Setters
@@ -91,15 +89,6 @@ public class User {
         this.address = address;
     }
 
-    // Gets the user's company name
-    public String getcompanyName() {  
-        return companyName;
-    }
-
-    // Sets the user's company name
-    public void setcompanyName(String companyName) {  
-        this.companyName = companyName;
-    }
 
     // Overrides toString() method to provide a string representation of the User object
     @Override
@@ -111,7 +100,6 @@ public class User {
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", address='" + address + '\'' +
-                ", companyName='" + companyName + '\'' +
                 '}';
     }
 }

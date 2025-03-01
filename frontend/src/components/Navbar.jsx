@@ -1,63 +1,93 @@
-import React, { useState } from 'react'; // Importing React and useState for state management
-import { Link } from 'react-router-dom'; // Importing Link component for navigation without page reload
+import React, { useState, useEffect } from "react";
+import { FaShoppingBag } from "react-icons/fa";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../index.css";
+import CartSidebar from "./CartSidebar"; // Import the new component
 
-const Navbar = ({ cartCount }) => {
-  // State to manage the toggle of the navbar in mobile view
-  const [isOpen, setIsOpen] = useState(false);
+const OnlineOrdering = () => {
+  const [navbarBg, setNavbarBg] = useState("transparent");
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cart, setCart] = useState([]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setNavbarBg(window.scrollY > 50 ? "#4E342E" : "transparent");
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, []);
+
+  const handleQuantityChange = (productId, newQuantity) => {
+    setCart((prevCart) => {
+      const updatedCart = prevCart.map((item) =>
+        item.productId === productId
+          ? { ...item, quantity: Math.max(1, newQuantity) }
+          : item
+      );
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  };
+
+  const handleRemoveItem = (productId) => {
+    setCart((prevCart) => {
+      const updatedCart = prevCart.filter((item) => item.productId !== productId);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div className="container">
-        {/* Brand logo that links to the homepage */}
-        <Link className="navbar-brand" to="/">MyShop</Link>
-
-        {/* Button to toggle navigation menu on small screens */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          onClick={() => setIsOpen(!isOpen)} // Toggle state on click
-        >
-          <span className="navbar-toggler-icon"></span> {/* Bootstrap hamburger icon */}
-        </button>
-
-        {/* Collapsible navigation menu */}
-        <div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`} id="navbarNav">
-          <ul className="navbar-nav ms-auto"> {/* Navigation list aligned to the right */}
-
-            {/* Navigation item for Home */}
-            <li className="nav-item">
-              <Link className="nav-link" to="/" onClick={() => setIsOpen(false)}>
-                Home
-              </Link>
-            </li>
-
-            {/* Navigation item for Shop */}
-            <li className="nav-item">
-              <Link className="nav-link" to="/shop" onClick={() => setIsOpen(false)}>
-                Shop
-              </Link>
-            </li>
-
-            {/* Navigation item for Cart */}
-            <li className="nav-item">
-              <Link className="nav-link position-relative" to="/cart" onClick={() => setIsOpen(false)}>
-                Cart
-                {/* Display badge only when there are items in the cart */}
-                {cartCount > 0 && (
-                  <span
-                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                    style={{ fontSize: '0.8rem' }}
-                  >
-                    {cartCount} {/* Display cart item count */}
-                  </span>
-                )}
-              </Link>
-            </li>
-          </ul>
+    <>
+      {/* Navigation Bar */}
+      <nav
+        className="navbar navbar-expand-lg fixed-top px-4"
+        style={{ backgroundColor: navbarBg, transition: "background-color 0.3s ease-in-out" }}
+      >
+        <div className="container-fluid d-flex justify-content-between align-items-center position-relative">
+          <div className="d-flex align-items-center">
+            <ul className="navbar-nav d-flex flex-row gap-3">
+              <li className="nav-item"><a className="nav-link text-white" href="/menu">Menu</a></li>
+              <li className="nav-item"><a className="nav-link text-white" href="/order">Order Online</a></li>
+              <li className="nav-item"><a className="nav-link text-white" href="#reservations">Reservations</a></li>
+              <li className="nav-item"><a className="nav-link text-white" href="#about">About</a></li>
+              <li className="nav-item"><a className="nav-link text-white" href="#contact">Contact</a></li>
+            </ul>
+          </div>
+          <div className="position-absolute start-50 translate-middle-x">
+            <a className="navbar-brand fs-2 fw-bold text-white text-center" href="/">Kronenbrunnen</a>
+          </div>
+          <div className="d-flex align-items-center">
+            <a href="/order" className="btn order-btn me-3">Order Now</a>
+            <FaShoppingBag 
+              className="text-white fs-4" 
+              style={{ cursor: "pointer" }} 
+              onClick={() => {
+                console.log("Cart icon clicked");
+                setCartOpen((prev) => !prev); // Toggle sidebar open/close
+              }} 
+            />
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Cart Sidebar Component */}
+      <CartSidebar 
+        cartOpen={cartOpen}
+        setCartOpen={setCartOpen}
+        cart={cart}
+        handleQuantityChange={handleQuantityChange}
+        handleRemoveItem={handleRemoveItem}
+      />
+    </>
   );
 };
 
-export default Navbar; // Exporting Navbar component for use in other parts of the application
+export default OnlineOrdering;

@@ -135,7 +135,6 @@ public class AuthController {
                     .claim("email", user.getEmail())
                     .claim("phoneNumber", user.getPhoneNumber())
                     .claim("address", user.getAddress())
-                    .claim("companyName", user.getCompanyName())
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1-hour expiration
                     .signWith(secretKey, SignatureAlgorithm.HS256)

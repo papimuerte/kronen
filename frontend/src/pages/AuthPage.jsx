@@ -55,7 +55,7 @@ const AuthPage = () => {
 
         setTimeout(() => {
           navigate(data.links.redirect); // Small delay to ensure token is written before navigation
-        }, 100);
+        }, 10);
 
         if (data.links?.redirect) {
           console.log("navigating to:", data.links.redirect);

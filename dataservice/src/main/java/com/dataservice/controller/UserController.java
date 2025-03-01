@@ -45,7 +45,6 @@ public class UserController {
                 if (updatedUser.getEmail() != null) user.setEmail(updatedUser.getEmail());
                 if (updatedUser.getPhoneNumber() != null) user.setPhoneNumber(updatedUser.getPhoneNumber());
                 if (updatedUser.getAddress() != null) user.setAddress(updatedUser.getAddress());
-                if (updatedUser.getcompanyName() != null) user.setcompanyName(updatedUser.getcompanyName());
 
                 jsonFileUtil.writeJsonFile(FILE_PATH, users);
                 return user;

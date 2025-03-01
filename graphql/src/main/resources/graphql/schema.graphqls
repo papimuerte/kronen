@@ -16,7 +16,6 @@ type Order {
   totalAmount: Float!
   status: String!
   createdAt: String!
-  companyName: String
   email: String
   address: String
   phoneNumber: String
@@ -32,7 +31,6 @@ type OrderProduct {
 
 input OrderInput {
   customerUsername: String!
-  companyName: String # Optional
   email: String # Optional
   address: String # Optional
   phoneNumber: String # Optional

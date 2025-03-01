@@ -1,5 +1,9 @@
 package com.dataservice.model;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,15 +15,18 @@ public class Product {
     private String productId;
     private String name;
     private String description;
-    private String category;
-    private String material;
     private Double unitPrice;
     private String currency;
-    private Integer availableQuantity;
-    private Integer minimumOrderQuantity;
-    private String supplier;
-    private Integer leadTimeDays;
-    private Integer weightGram;
+
+    private Map<String, Double> unitPrices; // Größenabhängige Preise
+
+    public void setUnitPrices(Map<String, Double> unitPrices) {
+        this.unitPrices = unitPrices;
+        // Falls vorhanden, nimm den kleinsten Preis als Standard
+        if (unitPrices != null && !unitPrices.isEmpty()) {
+            this.unitPrice = unitPrices.values().stream().min(Double::compare).orElse(null);
+        }
+    }
 
     // Explicit Getter and Setter for productId
     public String getproductId() {
@@ -38,13 +45,6 @@ public class Product {
         this.name = name;
         this.unitPrice = unitPrice;
         this.description = description;
-        this.category = category;
-        this.material = material;
         this.currency = currency;
-        this.availableQuantity = availableQuantity;
-        this.minimumOrderQuantity = minimumOrderQuantity;
-        this.supplier = supplier;
-        this.leadTimeDays = leadTimeDays;
-        this.weightGram = weightGram;
     }
 }
