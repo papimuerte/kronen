@@ -13,7 +13,7 @@ public class StripeService {
     private static final Logger logger = LoggerFactory.getLogger(StripeService.class);
 
     public StripeService() {
-        Stripe.apiKey = "sk_test_51JlxjKIsIcjwovka9A1bd98rPcNPhsPb5EigmVUCRkvopovGq6fDTfYKhFfADyX2x0cPA3PYkIYqDUR11qzWOjr800QNTgN27m";
+        Stripe.apiKey = "API_KEY";
         logger.info("Stripe API Key set successfully");
     }
 
