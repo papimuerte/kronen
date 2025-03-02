@@ -13,7 +13,7 @@ import java.util.List;
 
 @Component
 public class JsonFileUtil {
-    private static final String BASE_PATH = "data/";
+    private static final String BASE_PATH = "./data";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
  public <T> List<T> readJsonFile(String fileName, TypeReference<List<T>> typeReference) throws IOException {
