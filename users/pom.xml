@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1-SNAPSHOT</version> <!-- Ensure this version matches your project -->
+        <version>3.4.0</version> <!-- Ensure this version matches your project -->
         <relativePath /> 
     </parent>
 

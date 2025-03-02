@@ -17,34 +17,80 @@ const CheckoutForm = ({ totalAmount }) => {
     setError("");
     setSuccess("");
 
-    if (!stripe || !elements) return;
+    if (!stripe || !elements) {
+        setError("Stripe is not loaded.");
+        setLoading(false);
+        return;
+    }
 
     const cardElement = elements.getElement(CardElement);
 
     try {
-      const response = await fetch("http://localhost:8080/create-payment-intent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: totalAmount * 100 }),
-      });
+        // Create a payment method using Stripe.js
+        const { paymentMethod, error: paymentError } = await stripe.createPaymentMethod({
+            type: "card",
+            card: cardElement,
+        });
 
-      const { clientSecret } = await response.json();
+        if (paymentError) {
+            setError(paymentError.message);
+            setLoading(false);
+            return;
+        }
 
-      const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: { card: cardElement },
-      });
+        console.log("Payment Method Created:", paymentMethod.id);
 
-      if (error) {
-        setError(error.message);
-      } else if (paymentIntent.status === "succeeded") {
-        setSuccess("Payment successful!");
-      }
+        // Send `paymentMethodId` to your backend
+        const response = await fetch("http://localhost:8080/graphql", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                query: `
+                mutation {
+                    createPayment(
+                        amount: ${totalAmount}, 
+                        currency: "eur", 
+                        paymentMethod: "STRIPE", 
+                        paymentMethodId: "${paymentMethod.id}"
+                    ) {
+                        id
+                        status
+                    }
+                }
+                `,
+            }),
+        });
+
+        const { data } = await response.json();
+        console.log("Backend Response:", data);
+
+        if (!data || !data.createPayment) {
+            setError("Payment failed. Please try again.");
+            setLoading(false);
+            return;
+        }
+
+        // 3️ Confirm the PaymentIntent with Stripe
+        const clientSecret = data.createPayment.id;  // Use PaymentIntent ID
+        const { paymentIntent, error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
+            payment_method: paymentMethod.id,
+        });
+
+        if (confirmError) {
+            setError(confirmError.message);
+        } else if (paymentIntent.status === "succeeded") {
+            setSuccess("Payment successful!");
+        }
+
     } catch (err) {
-      setError("Payment failed. Please try again.");
+        setError("Payment failed. Please try again.");
+        console.error(err);
     }
 
     setLoading(false);
-  };
+};
+
+  
 
   return (
     <form onSubmit={handlePayment} className="payment-form">

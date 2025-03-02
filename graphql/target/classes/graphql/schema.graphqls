@@ -7,7 +7,21 @@ type Query {
 type Mutation {
     createOrder(input: OrderInput!): Order!
     updateOrderStatus(orderId: String!, newStatus: String!): Order
+    createPayment(amount: Float!, currency: String!, paymentMethod: PaymentMethod!, paymentMethodId: String): PaymentIntent
 }
+
+enum PaymentMethod {
+    CASH
+    STRIPE
+    CARD
+}
+
+type PaymentIntent {
+    id: String
+    status: String!
+    method: PaymentMethod!
+}
+
 
 type Order {
   id: String!
@@ -16,7 +30,6 @@ type Order {
   totalAmount: Float!
   status: String!
   createdAt: String!
-  companyName: String
   email: String
   address: String
   phoneNumber: String
@@ -32,7 +45,6 @@ type OrderProduct {
 
 input OrderInput {
   customerUsername: String!
-  companyName: String # Optional
   email: String # Optional
   address: String # Optional
   phoneNumber: String # Optional
@@ -46,4 +58,5 @@ input OrderProductInput {
   name: String # Optional
   unitPrice: Float # Optional
 }
+
 
