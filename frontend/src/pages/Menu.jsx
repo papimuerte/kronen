@@ -77,8 +77,15 @@ const MenuPage = () => {
                           <div>
                             <span className="fw-light text-white" style={{ fontSize: "2rem" }}>{product.name}</span>
                             {product.description && <p className="text-white mb-0">{product.description}</p>}
-                          </div>
-                          <span className="fs-4 text-white">€{product.unitPrice.toFixed(2)}</span>
+                          </div>  
+                          <span className="fs-4 text-white">
+                            {product.unitPrice 
+                              ? `€${product.unitPrice.toFixed(2)}` 
+                              : Object.entries(product.unitPrices).map(([size, price]) => (
+                                  <span key={size} className="d-block">{size}: €{price.toFixed(2)}</span>
+                                ))
+                            }
+                          </span>
                         </li>
                       ))}
                     </ul>

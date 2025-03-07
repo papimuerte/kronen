@@ -9,6 +9,7 @@ const CartSidebar = ({ cartOpen, setCartOpen}) => {
   // Load cart initially
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
+    console.log(savedCart)
     if (savedCart) {
       setCart(JSON.parse(savedCart));
     }
@@ -21,6 +22,7 @@ const CartSidebar = ({ cartOpen, setCartOpen}) => {
       setCart(updatedCart);
     };
 
+  
     window.addEventListener('storage', handleStorageChange);
 
     return () => {

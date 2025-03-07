@@ -1,0 +1,73 @@
+type Query {
+  ordersByCustomer(customerUsername: String!): [Order!]! # Retrieve orders by customerUsername
+  allOrders: [Order!]! # Retrieve all orders
+  order(id: String!): Order
+}
+
+type Mutation {
+    createOrder(input: OrderInput!): Order!
+    updateOrderStatus(orderId: String!, newStatus: String!): Order
+    createPayment(amount: Float!, currency: String!, paymentMethod: PaymentMethod!, paymentMethodId: String): PaymentResponse!
+}
+
+enum PaymentMethod {
+    CASH
+    STRIPE
+    CARD
+}
+
+type PaymentIntent {
+    id: String
+    status: String!
+    method: PaymentMethod!
+}
+
+type Payment {
+  id: ID!
+  status: String!
+  clientSecret: String!  
+}
+
+type PaymentResponse {
+  id: String!
+  status: String!
+  clientSecret: String!  # ✅ Füge das `clientSecret`-Feld hinzu
+}
+
+type Order {
+  id: String!
+  customerUsername: String!
+  products: [OrderProduct!]!
+  totalAmount: Float!
+  status: String!
+  createdAt: String!
+  email: String
+  address: String
+  phoneNumber: String
+  notes: String
+}
+
+type OrderProduct {
+  productId: String!
+  name: String
+  quantity: Int!
+  unitPrice: Float!
+}
+
+input OrderInput {
+  customerUsername: String!
+  email: String # Optional
+  address: String # Optional
+  phoneNumber: String # Optional
+  notes: String # Optional
+  products: [OrderProductInput!]!
+}
+
+input OrderProductInput {
+  productId: String!
+  quantity: Int!
+  name: String # Optional
+  unitPrice: Float # Optional
+}
+
+

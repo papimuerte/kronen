@@ -41,8 +41,8 @@ const HeroSection = () => {
           <h1 className="display-1 fw-bold text-white text-uppercase hero-title" style={{ fontSize: "8rem" }}>KRONENBRUNNEN</h1>
           <p className="text-white fs-3 fst-italic">Bar &bull; Restaurant &bull; Pizzeria</p>
           <div className="hero-buttons mt-4">
-            <a href="#order" className="btn order-btn me-3">Order Online</a>
-            <a href="#reservations" className="btn order-btn">Reservations</a>
+            <a href="/order" className="btn order-btn me-3">Order Online</a>
+            <a href="#contact" className="btn order-btn">Reservations</a>
           </div>
         </div>
       </div>
