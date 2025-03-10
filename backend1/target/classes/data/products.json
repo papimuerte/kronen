@@ -1,0 +1,56 @@
+{
+    "menu": {
+      "Vorspeisen": [
+        {"productId": 1, "name": "Bruschetta", "unitPrice": 4.50, "description": "Tomatenwürfel, Zwiebeln, Basilikum, Balsamico Creme"},
+        {"productId": 2, "name": "Pizzabrot", "unitPrice": 4.50, "description": "Knoblauch oder Tomatensauce"},
+        {"productId": 3, "name": "Carpaccio", "unitPrice": 13.90, "description": "hauchdünne Rindfleischstreifen, Rucola, Parmesan, Zitrone"},
+        {"productId": 4, "name": "Vitello Tonatto", "unitPrice": 13.90, "description": "blanchierte Kalbsfleischstreifen mit Thunfischsoße, Kapern und Ei"},
+        {"productId": 5, "name": "Antipasti", "unitPrice": 15.90, "description": "Kombination von Carpaccio, Vitello Tonatto, mediterranem Gemüse, Tomaten mit Mozzarella"}
+      ],
+      "Salate": [
+        {"productId": 6, "name": "Kleiner Gemischter Salat", "unitPrice": 5.00},
+        {"productId": 7, "name": "Großer Gemischter Salat", "unitPrice": 8.00},
+        {"productId": 8, "name": "Salat Caprese", "unitPrice": 11.00, "description": "frische Tomaten, Mozzarella, Basilikum"},
+        {"productId": 9, "name": "Salat a la Casa", "unitPrice": 12.00, "description": "Thunfisch, Zwiebeln, Schinken, Mozzarella, Oliven, Ei"},
+        {"productId": 10, "name": "Salat Kronenbrunnen", "unitPrice": 14.00, "description": "Gebratene Hähnchenbruststreifen, Champignons in Süß-Sauer-Chili-Sauce"},
+        {"productId": 11, "name": "Salat Schafskäse", "unitPrice": 14.00, "description": "Gebackener Schafskäse und Preiselbeeren"},
+        {"productId": 12, "name": "Salat Rucola", "unitPrice": 17.90, "description": "Mit Rinderstreifen, Champignons, Kirschtomaten, Parmesan"}
+      ],
+      "Pizza": [
+        {"productId": 13, "name": "Margherita", "unitPrices": {"30cm": 7.90, "38cm": 10.90}},
+        {"productId": 14, "name": "Salami", "unitPrices": {"30cm": 10.90, "38cm": 13.90}},
+        {"productId": 15, "name": "Schinken", "unitPrices": {"30cm": 10.90, "38cm": 13.90}},
+        {"productId": 16, "name": "Funghi", "unitPrices": {"30cm": 10.90, "38cm": 13.90}},
+        {"productId": 17, "name": "Peperoniwurst", "unitPrices": {"30cm": 10.90, "38cm": 13.90}},
+        {"productId": 18, "name": "Rucola", "unitPrices": {"30cm": 11.90, "38cm": 14.90}, "description": "Rucola, Parmesan"},
+        {"productId": 19, "name": "Parma", "unitPrices": {"30cm": 12.90, "38cm": 15.90}, "description": "Parmaschinken, Rucola, Parmesan"}
+      ],
+      "Pasta": [
+        {"productId": 20, "name": "Spaghetti Napoli", "unitPrice": 8.90, "description": "mit Tomatensoße"},
+        {"productId": 21, "name": "Spaghetti Bolognese", "unitPrice": 9.90, "description": "mit Rinderhackfleisch"},
+        {"productId": 22, "name": "Spaghetti Carbonara", "unitPrice": 11.90, "description": "mit Schinken, Sahnesoße und Ei oder Classic"},
+        {"productId": 23, "name": "Spaghetti Frutti de Mare", "unitPrice": 14.90, "description": "mit Meeresfrüchte, Knoblauch, Tomatensugo"}
+      ],
+      "Burger": [
+        {"productId": 24, "name": "Classic", "unitPrice": 13.90, "description": "Rindfleisch Patty 180g, Brioche Bun, Salat, Sauergurken, Tomaten, Zwiebeln, Pommes Fritten"},
+        {"productId": 25, "name": "Cheese Burger", "unitPrice": 15.90, "description": "Rindfleisch Patty 180g, Brioche Bun, Bacon, Cheddar Käse, Pommes Fritten"},
+        {"productId": 26, "name": "Crispy Chicken Burger", "unitPrice": 13.90, "description": "Crispy Chicken Patty, Brioche Bun, Salat, Sauergurken, Tomaten, Zwiebeln, Cheddar Käse, Pommes Fritten"}
+      ],
+      "Desserts": [
+        {"productId": 27, "name": "Hausgemachtes Tiramisu", "unitPrice": 6.50},
+        {"productId": 28, "name": "Tartufo Classic", "unitPrice": 7.50},
+        {"productId": 29, "name": "Tartufo Pistazie", "unitPrice": 7.50}
+      ]
+    },
+    "opening_hours": {
+      "productId": 30,
+      "Montag-Samstag": "16:00-22:00",
+      "Sonntag & Feiertage": "12:00-22:00",
+      "Dienstag": "Ruhetag"
+    },
+    "contact": {
+      "productId": 31,
+      "phone_numbers": ["06055-9337531", "9384202", "9382219"]
+    }
+  }
+  
